@@ -1,0 +1,45 @@
+.chat__wrapper {
+    width: 60%;
+    margin: 0 auto;
+    padding: 100px 0px;
+    
+}
+.chat__content {
+    border: 1px solid lightgray;
+}
+.chat__messages {
+    padding: 50px 0px;
+}
+.chat__new__message {
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+    
+}
+.chat__btn {
+    width: 200px;
+    
+}
+.message__avatar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+.message__text {
+    padding: 15px 10px;
+}
+.my__message {
+    border: 1px solid green;
+    width: fit-content;
+    padding: 10px;
+}
+.message {
+    border: 1px solid lightblue;
+    width: fit-content;
+    padding: 10px;
+    margin-left: auto;
+    
+}
