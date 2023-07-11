@@ -4,13 +4,17 @@ import { Context } from '../..'
 import cl from './Chat.module.css'
 import {useCollectionData} from 'react-firebase-hooks/firestore'
 import { TextField, Button, Avatar } from '@mui/material'
-import { collection } from 'firebase/firestore'
+import { collection, updateDoc } from 'firebase/firestore'
 import { orderBy } from 'firebase/firestore'
 import { serverTimestamp } from 'firebase/firestore'
-import { addDoc } from 'firebase/firestore'
+import { addDoc, doc, FieldPath, setDoc } from 'firebase/firestore'
 import { query } from 'firebase/firestore'
-import { IMessage } from '../../types/types'
-import { FirestoreDataConverter } from 'firebase/firestore'
+import { IMessage, IRoom } from '../../types/types'
+import Message from '../Message/Message'
+import RoomItem from '../RoomItem/RoomItem'
+
+
+
 
 
 
@@ -19,38 +23,54 @@ const Chat: FC = () => {
     const {auth, firestore} = useContext(Context)
     const [user] = useAuthState(auth)
     const [value, setValue] = useState<string>('')
+    const [roomName, setRoomName] = useState<string>('')
+    const [selectedRoom, setSelectedRoom] = useState<string>('room3')
+    
+
+    
     const sendMessage = async () => {
-       await addDoc(collection(firestore, 'messages') ,{
+       await addDoc(collection(firestore,  `rooms/${selectedRoom}/messages`) ,{
             uid: user?.uid,
             displayName: user?.displayName,
             photoURL: user?.photoURL,
             text: value,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
         });
         setValue('')
     }
-    const messageConverter = () => {
+    const createRoom = async (e: React.MouseEvent) => {
+       await setDoc(doc(firestore, 'rooms',`${roomName}`) , {
+            name: roomName,
+            createdAt: serverTimestamp(),
+       }) 
+    } 
+
+            
         
-    }
-    const [messages, loading] = useCollectionData(
-        query(collection(firestore, 'messages'),
+    
+    const [rooms] = useCollectionData<IRoom>(
+        query(collection(firestore, `rooms`),
         orderBy('createdAt')),
-        
+    )
+    console.log(rooms)
+    const [messages, loading] = useCollectionData<IMessage>(
+        query(collection(firestore, `rooms/${selectedRoom}/messages`),
+        orderBy('createdAt')),
         
     )
     
+    
     return (
         <div className={cl.chat__wrapper}>
+            <div className={cl.chat__rooms}>
+                    {rooms?.map(room => <RoomItem room={room} key={room.createdAt}/>)}
+                    <button onClick={createRoom}>New room...</button>
+                    <TextField value={roomName} onChange={(e) => setRoomName(e.target.value)} fullWidth maxRows={2} className={cl.chat__input} placeholder='Room name...' variant='outlined'/>
+            </div>
             <div className={cl.chat__content}>
                 <div className={cl.chat__messages}>
                     {messages?.map(message => 
-                            <div key={message.createdAt} className={user?.uid === message.uid ? `${cl.my__message}` : `${cl.message}`}>
-                            <div className={cl.message__avatar}>
-                                <Avatar src={message.photoURL}/>
-                                <span>{message.displayName}</span>
-                            </div>
-                            <div className={cl.message__text}>{message.text}</div>
-                            </div> 
+                            <Message messages={message} key={message.createdAt}/>
                             
                         )}
                 </div>

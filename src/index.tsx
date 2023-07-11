@@ -24,6 +24,7 @@ const analytics = getAnalytics(app)
 const auth = getAuth(app)
 const firestore = getFirestore(app)
 
+
 export const Context = createContext<any| null>(null)
 
 const root = ReactDOM.createRoot(
