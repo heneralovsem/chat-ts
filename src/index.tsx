@@ -26,6 +26,7 @@ const firestore = getFirestore(app)
 
 
 export const Context = createContext<any| null>(null)
+export const RoomContext = createContext<any | null>(null)
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
