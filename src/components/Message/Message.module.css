@@ -1,0 +1,52 @@
+/* .my__message {
+    
+} */
+.message__wrapper {
+    padding: 5px 15px 5px 15px;
+    
+}
+.message__wrapper:hover {
+    background-color: lightgrey;
+}
+/* .message {
+    padding: 5px 15px 5px 15px;
+} */
+.message__column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.message__row {
+    display: flex;
+    justify-content: space-between;
+}
+.message__avatar__row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.message__text {
+   padding-left: 5px;
+}
+.comment__modal {
+    background: whitesmoke;
+    padding: 40px 0;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    text-align: center;
+}
+.modal__text {
+    width: 250px;
+    margin: 0 auto;
+}
+.modal__btn {
+    width: 150px;
+    margin: 0 auto;
+}

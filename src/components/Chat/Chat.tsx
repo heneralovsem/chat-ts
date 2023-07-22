@@ -1,10 +1,10 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState, MutableRefObject } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Context, RoomContext } from "../..";
 import cl from "./Chat.module.css";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { TextField, Button, Avatar, Modal } from "@mui/material";
-import { collection, updateDoc } from "firebase/firestore";
+import { collection, documentId, updateDoc,  } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
@@ -22,52 +22,86 @@ const Chat: FC = () => {
   const [roomStatus, setRoomStatus] = useState<string>("public");
   const [roomMembers, setRoomMembers] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
+  const [isScrolling, setIsScrolling] = useState<boolean>(false)
+  const roomRef = doc(firestore, `rooms`, selectedRoom)
+  const msgCollectionRef = collection(firestore,`rooms/${selectedRoom}/messages` )
+  const lastElement = useRef<HTMLDivElement | any>(null)
+  const observer = useRef<IntersectionObserver >()
+  
   const openModal = () => {
     setModal(true);
   };
   const closeModal = () => {
     setModal(false);
   };
-  console.log(roomStatus);
+  const scrolling = () => {
+    setIsScrolling(true)
+  }
+  console.log(isScrolling)
   const sendMessage = async () => {
-    await addDoc(collection(firestore, `rooms/${selectedRoom}/messages`), {
+    const msgDocRef = doc(msgCollectionRef)
+    const id = msgDocRef.id
+    await setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
       uid: user?.uid,
       displayName: user?.displayName,
       photoURL: user?.photoURL,
       text: value,
       createdAt: serverTimestamp(),
+      docId: id
+       
     });
     setValue("");
+    updateDoc(roomRef, {
+      timestamp: serverTimestamp()
+    })
   };
   const createRoom = async (e: React.MouseEvent) => {
     await setDoc(doc(firestore, "rooms", `${roomName}`), {
       name: roomName,
       status: roomStatus,
       users: [user?.displayName, ...roomMembers.split(",")],
-      createdAt: serverTimestamp(),
+      timestamp: serverTimestamp(),
     });
+    closeModal()
   };
-
-  const [rooms] = useCollectionData<IRoom>(
-    query(collection(firestore, `rooms`), orderBy("createdAt"))
-  );
-  console.log(rooms);
   const [messages, loading] = useCollectionData<IMessage>(
     query(
       collection(firestore, `rooms/${selectedRoom}/messages`),
-      orderBy("createdAt")
+      orderBy("createdAt"),
     )
   );
-
+  const [rooms] = useCollectionData<IRoom>(
+    query(collection(firestore, `rooms`), orderBy("timestamp", 'desc')),
+  );
+  // const element = document.getElementById("test");
+  const scrollToBottom = () => {
+    if (!isScrolling) {
+      lastElement.current?.scrollIntoView()
+    }
+    
+  }
+  useEffect(() => {
+      scrollToBottom()
+  }, [messages])
+  useEffect(() => {
+    if(observer.current) observer.current.disconnect()
+  var callback = function(entries:any, observer:any) {
+      if (entries[0].isIntersecting) {
+        setIsScrolling(false)
+      }
+  };
+  observer.current = new IntersectionObserver(callback);
+  observer.current.observe(lastElement.current)
+  })
   return (
     <div className={cl.chat__wrapper}>
       <div className={cl.chat__rooms}>
         {rooms?.map((room) =>
           room.status === "public" ? (
-            <RoomItem room={room} key={room.createdAt} />
+            <RoomItem room={room} isScrolling={isScrolling} setIsScrolling={setIsScrolling} key={room.name} />
           ) : room.status === "private" &&
             room.users?.includes(user?.displayName) ? (
-            <RoomItem room={room} key={room.createdAt} />
+            <RoomItem isScrolling={isScrolling} setIsScrolling={setIsScrolling} room={room} key={room.name} />
           ) : null
         )}
         <button onClick={openModal}>New room...</button>
@@ -118,18 +152,25 @@ const Chat: FC = () => {
         </Modal>
       </div>
       <div className={cl.chat__content}>
-        <div className={cl.chat__messages}>
-          {messages?.map((message) => (
-            <Message messages={message} key={message.createdAt} />
-          ))}
+        <div className={cl.chat__header}>
+          <h1>{selectedRoom}</h1>
         </div>
-      </div>
-      <div className={cl.chat__new__message}>
+        <div onScroll={scrolling} className={cl.chat__messages}>
+          <div className={cl.chat__msgtest}>
+          {messages?.map((message) => (
+            <Message messages={message}  key={message.docId} />
+          ))}
+          <div ref={lastElement}></div>
+          </div>
+          
+        </div>
+        <div className={cl.chat__new__message}>
         <TextField
           value={value}
           onChange={(e) => setValue(e.target.value)}
           fullWidth
           maxRows={2}
+          size="small"
           className={cl.chat__input}
           placeholder="Your message..."
           variant="outlined"
@@ -141,6 +182,7 @@ const Chat: FC = () => {
         >
           Send
         </Button>
+      </div>
       </div>
     </div>
   );

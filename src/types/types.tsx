@@ -4,12 +4,13 @@ export interface IMessage {
     photoURL?: string;
     text?: string;
     createdAt?: any;
+    docId?:string
 }
 
 export interface IRoom {
     name?: string;
     status?: string;
-    createdAt?:any;
+    timestamp?:any;
     users?: Array<any>;
 }
 export interface IUser {
