@@ -1,13 +1,15 @@
 import React, { FC, useContext, useState } from "react";
 import { IMessage } from "../../types/types";
 import cl from "./Message.module.css";
-import { Avatar } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import { Context } from "../..";
 import { RoomContext } from "../..";
 import { useAuthState } from "react-firebase-hooks/auth";
 import dayjs from "dayjs";
 import { Modal, TextField, Button } from "@mui/material";
 import { updateDoc, collection, doc, deleteDoc } from "firebase/firestore";
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface MessageProps {
   messages: IMessage;
@@ -77,8 +79,8 @@ const Message: FC<MessageProps> = ({ messages }) => {
             </div>
             {isHovering && user?.uid === messages.uid && (
               <div className={cl.message__icons}>
-                <button onClick={deleteMessage}>delete</button>
-                <button onClick={openModal}>edit</button>
+               <IconButton className={cl.edit__icon} onClick={openModal} color="default"><EditIcon/></IconButton> 
+               <IconButton className={cl.delete__icon} onClick={deleteMessage} color="default"><DeleteIcon /></IconButton> 
                 <Modal open={modal} onClose={closeModal}>
                   <div className={cl.comment__modal}>
                     <div>

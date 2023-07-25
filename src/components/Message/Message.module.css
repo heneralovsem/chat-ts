@@ -50,3 +50,11 @@
     width: 150px;
     margin: 0 auto;
 }
+.edit__icon:hover {
+    color: #242424;
+    transition: 0.5s;
+}
+.delete__icon:hover {
+    color: #242424;
+    transition: 0.5s;
+}

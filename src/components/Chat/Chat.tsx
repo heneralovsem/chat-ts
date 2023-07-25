@@ -12,6 +12,7 @@ import { query } from "firebase/firestore";
 import { IMessage, IRoom } from "../../types/types";
 import Message from "../Message/Message";
 import RoomItem from "../RoomItem/RoomItem";
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 
 const Chat: FC = () => {
   const { auth, firestore } = useContext(Context);
@@ -23,6 +24,9 @@ const Chat: FC = () => {
   const [roomMembers, setRoomMembers] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
   const [isScrolling, setIsScrolling] = useState<boolean>(false)
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isRunning, setIsRunning] = useState<boolean>(false)
+  const refTimer = useRef<number | null>(null)
   const roomRef = doc(firestore, `rooms`, selectedRoom)
   const msgCollectionRef = collection(firestore,`rooms/${selectedRoom}/messages` )
   const lastElement = useRef<HTMLDivElement | any>(null)
@@ -37,7 +41,22 @@ const Chat: FC = () => {
   const scrolling = () => {
     setIsScrolling(true)
   }
-  console.log(isScrolling)
+  const showButton = () => {
+    if (refTimer.current !== null) return;
+    setIsRunning(true);
+    refTimer.current = window.setTimeout(() => {
+      setIsVisible(true);
+      setIsRunning(false)
+    }, 3000)
+  }
+  const stopTimeout = () => {
+    if (refTimer.current === null) return;
+    window.clearTimeout(refTimer.current)
+    refTimer.current = null;
+    setIsRunning(false)
+  }
+  
+  console.log(isVisible)
   const sendMessage = async () => {
     const msgDocRef = doc(msgCollectionRef)
     const id = msgDocRef.id
@@ -55,6 +74,11 @@ const Chat: FC = () => {
       timestamp: serverTimestamp()
     })
   };
+  const sendOnEnter = (e:React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      sendMessage()
+    }
+  } 
   const createRoom = async (e: React.MouseEvent) => {
     await setDoc(doc(firestore, "rooms", `${roomName}`), {
       name: roomName,
@@ -70,29 +94,41 @@ const Chat: FC = () => {
       orderBy("createdAt"),
     )
   );
-  const [rooms] = useCollectionData<IRoom>(
+  const [rooms, roomsLoading] = useCollectionData<IRoom>(
     query(collection(firestore, `rooms`), orderBy("timestamp", 'desc')),
   );
   // const element = document.getElementById("test");
   const scrollToBottom = () => {
     if (!isScrolling) {
-      lastElement.current?.scrollIntoView()
+      setTimeout(() => {
+        lastElement.current?.scrollIntoView()
+      }, 10 )
+      
     }
-    
+ console.log(roomsLoading)   
+  }
+  const forceScroll = () => {
+    lastElement.current?.scrollIntoView({ behavior: "smooth"})
   }
   useEffect(() => {
       scrollToBottom()
   }, [messages])
   useEffect(() => {
     if(observer.current) observer.current.disconnect()
-  var callback = function(entries:any, observer:any) {
+    // @ts-ignore
+  var callback = function(entries, observer) {
       if (entries[0].isIntersecting) {
         setIsScrolling(false)
+        setIsVisible(false)
+        stopTimeout()
+      }
+      if (!entries[0].isIntersecting) {
+        showButton()
       }
   };
   observer.current = new IntersectionObserver(callback);
   observer.current.observe(lastElement.current)
-  })
+  }, [isVisible, messages] )
   return (
     <div className={cl.chat__wrapper}>
       <div className={cl.chat__rooms}>
@@ -160,6 +196,10 @@ const Chat: FC = () => {
           {messages?.map((message) => (
             <Message messages={message}  key={message.docId} />
           ))}
+          {isVisible && <div className={cl.chat__scrollbtn__wrapper}>
+            <button onClick={forceScroll} className={cl.chat__scrollbtn}><KeyboardArrowDownRoundedIcon fontSize="small"/></button>
+            </div> }
+            
           <div ref={lastElement}></div>
           </div>
           
@@ -168,6 +208,7 @@ const Chat: FC = () => {
         <TextField
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onKeyUp={sendOnEnter}
           fullWidth
           maxRows={2}
           size="small"

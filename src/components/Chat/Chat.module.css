@@ -7,7 +7,7 @@
     
 }
 .chat__rooms {
-    border: 1px solid red;
+    border: 1px solid lightgray;
     overflow-y: hidden;
     width: 20%;
     /* height: 70vh; */
@@ -25,10 +25,12 @@
     /* height: 70vh; */
 }
 .chat__header {
-    border: 1px solid black;
+    padding:10px 15px ;
+    border: 1px solid lightgray;
     
 }
 .chat__messages {
+    position: relative;
     padding: 10px 0px 20px 0px;
     overflow-y: auto;
     word-wrap: break-word;
@@ -37,20 +39,16 @@
     flex-direction: column;
     
 }
-.chat__msgtest {
-    
-}
-/* .chat__messages {
-    padding: 10px 0px 20px 0px;
-    word-wrap: break-word;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; 
-}
-.chat__msgtest {
+/* .chat__messages:hover {
     overflow-y: auto;
 } */
+.chat__msgtest {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+}
+
 .chat__new__message {
     display: flex;
 }
@@ -76,4 +74,15 @@
 .modal__button {
     width: 200px;
     margin: 0 auto;
+}
+.chat__scrollbtn__wrapper {
+    position: absolute;
+    bottom: 50px;
+    right: 75px;
+}
+.chat__scrollbtn {
+    position: fixed;
+    width: 50px;
+    border-radius: 50%;
+    
 }
