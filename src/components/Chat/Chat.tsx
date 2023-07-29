@@ -3,8 +3,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Context, RoomContext } from "../..";
 import cl from "./Chat.module.css";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { TextField, Button, Avatar, Modal } from "@mui/material";
-import { collection, documentId, updateDoc,  } from "firebase/firestore";
+import { TextField, Button, Avatar, Modal, IconButton } from "@mui/material";
+import { collection, documentId, updateDoc, where,  } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
@@ -13,6 +13,9 @@ import { IMessage, IRoom } from "../../types/types";
 import Message from "../Message/Message";
 import RoomItem from "../RoomItem/RoomItem";
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import Loader from "../Loader/Loader";
+import PushPinIcon from '@mui/icons-material/PushPin';
+import FilteredMessage from "../FilteredMessage/FilteredMessage";
 
 const Chat: FC = () => {
   const { auth, firestore } = useContext(Context);
@@ -26,21 +29,21 @@ const Chat: FC = () => {
   const [isScrolling, setIsScrolling] = useState<boolean>(false)
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [isRunning, setIsRunning] = useState<boolean>(false)
+  const [isShowPinned, setIsShowPinned] = useState<boolean>(false)
+  const [selectedMessage, setSelectedMessage] = useState<string>('')
   const refTimer = useRef<number | null>(null)
   const roomRef = doc(firestore, `rooms`, selectedRoom)
   const msgCollectionRef = collection(firestore,`rooms/${selectedRoom}/messages` )
   const lastElement = useRef<HTMLDivElement | any>(null)
   const observer = useRef<IntersectionObserver >()
   
+  console.log(selectedMessage)
   const openModal = () => {
     setModal(true);
   };
   const closeModal = () => {
     setModal(false);
   };
-  const scrolling = () => {
-    setIsScrolling(true)
-  }
   const showButton = () => {
     if (refTimer.current !== null) return;
     setIsRunning(true);
@@ -66,7 +69,8 @@ const Chat: FC = () => {
       photoURL: user?.photoURL,
       text: value,
       createdAt: serverTimestamp(),
-      docId: id
+      docId: id,
+      isPinned: false
        
     });
     setValue("");
@@ -88,13 +92,40 @@ const Chat: FC = () => {
     });
     closeModal()
   };
-  const [messages, loading] = useCollectionData<IMessage>(
+  const [pinnedMessages] = useCollectionData<IMessage>(
+    query(
+      collection(firestore, `rooms/${selectedRoom}/messages`),
+      where('isPinned', '==', true),
+      orderBy("createdAt"),
+    )
+  );
+  const [messages] = useCollectionData<IMessage>(
     query(
       collection(firestore, `rooms/${selectedRoom}/messages`),
       orderBy("createdAt"),
     )
   );
-  const [rooms, roomsLoading] = useCollectionData<IRoom>(
+  const refTest = useRef<any | null>(null)
+  const showPinned = () => {
+    setIsShowPinned(!isShowPinned)
+
+    // refTest.current
+    console.log(refTest.current)
+    //@ts-ignore
+    //  refTest.current.scrollIntoView()
+     
+  }
+  console.log(messages?.[30])
+  // if (isShowPinned) {
+  //   const [messages, loading] = useCollectionData<IMessage>(
+  //     query(
+  //       collection(firestore, `rooms/${selectedRoom}/messages`),
+  //       where('isPinned', '==', 'true'),
+  //       orderBy("createdAt"),
+  //     )
+  //   );
+  // }
+  const [rooms, loading] = useCollectionData<IRoom>(
     query(collection(firestore, `rooms`), orderBy("timestamp", 'desc')),
   );
   // const element = document.getElementById("test");
@@ -104,11 +135,14 @@ const Chat: FC = () => {
         lastElement.current?.scrollIntoView()
       }, 10 )
       
-    }
- console.log(roomsLoading)   
+    }  
   }
   const forceScroll = () => {
     lastElement.current?.scrollIntoView({ behavior: "smooth"})
+  }
+  const scrollToPinned = () => {
+    refTest.current.scrollIntoView({block: 'center'})
+    setSelectedMessage('')
   }
   useEffect(() => {
       scrollToBottom()
@@ -123,6 +157,7 @@ const Chat: FC = () => {
         stopTimeout()
       }
       if (!entries[0].isIntersecting) {
+        setIsScrolling(true)
         showButton()
       }
   };
@@ -132,13 +167,15 @@ const Chat: FC = () => {
   return (
     <div className={cl.chat__wrapper}>
       <div className={cl.chat__rooms}>
-        {rooms?.map((room) =>
+        {loading && <Loader/>}
+       {!loading && rooms?.map((room) =>
           room.status === "public" ? (
             <RoomItem room={room} isScrolling={isScrolling} setIsScrolling={setIsScrolling} key={room.name} />
           ) : room.status === "private" &&
             room.users?.includes(user?.displayName) ? (
             <RoomItem isScrolling={isScrolling} setIsScrolling={setIsScrolling} room={room} key={room.name} />
           ) : null
+          
         )}
         <button onClick={openModal}>New room...</button>
         <Modal open={modal} onClose={closeModal}>
@@ -190,12 +227,31 @@ const Chat: FC = () => {
       <div className={cl.chat__content}>
         <div className={cl.chat__header}>
           <h1>{selectedRoom}</h1>
+          <div className={cl.chat__header__icons}>
+          <IconButton className={cl.pin__icon} onClick={showPinned} color="default"><PushPinIcon /></IconButton>
+          {isShowPinned && <div className={cl.chat__pinned__messages}>
+            <h1>Pinned messages</h1>
+            {pinnedMessages?.map((message) => (
+              //@ts-ignore
+              <FilteredMessage scrollToPinned={scrollToPinned} selectedMessage={selectedMessage} setSelectedMessage={setSelectedMessage} message={message} key={message.docId}/>
+            ))}
+          </div>}
+          
+          </div>
         </div>
-        <div onScroll={scrolling} className={cl.chat__messages}>
+        <div className={cl.chat__messages}>
           <div className={cl.chat__msgtest}>
-          {messages?.map((message) => (
+            {/* {isShowPinned ? pinnedMessages?.map((message) => (
+            <Message ref={refTest} messages={message}  key={message.docId} />
+          )) : */}
+         {messages?.map((message) => {
+            const refProps = selectedMessage === message.docId ? {ref: refTest} : {}; return (
+            <Message {...refProps} messages={message}  key={message.docId} />
+          )})}
+           {/* } */}
+          {/* {messages?.map((message) => (
             <Message messages={message}  key={message.docId} />
-          ))}
+          ))} */}
           {isVisible && <div className={cl.chat__scrollbtn__wrapper}>
             <button onClick={forceScroll} className={cl.chat__scrollbtn}><KeyboardArrowDownRoundedIcon fontSize="small"/></button>
             </div> }

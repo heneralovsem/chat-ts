@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, forwardRef, useContext, useState } from "react";
 import { IMessage } from "../../types/types";
 import cl from "./Message.module.css";
 import { Avatar, IconButton } from "@mui/material";
@@ -10,12 +10,14 @@ import { Modal, TextField, Button } from "@mui/material";
 import { updateDoc, collection, doc, deleteDoc } from "firebase/firestore";
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
+import PushPinIcon from '@mui/icons-material/PushPin';
 
 interface MessageProps {
   messages: IMessage;
+  ref: any;
 }
 
-const Message: FC<MessageProps> = ({ messages }) => {
+const Message: FC<MessageProps> = ({ messages }, ref) => {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
@@ -45,6 +47,11 @@ const Message: FC<MessageProps> = ({ messages }) => {
       text: editedValue,
     });
   };
+  const pinMessage = () => {
+    updateDoc(msgRef, {
+      isPinned: true
+    })
+  }
   const deleteMessage =  async() => {
     await deleteDoc(msgRef)
   }
@@ -61,7 +68,7 @@ const Message: FC<MessageProps> = ({ messages }) => {
   const fullDate = dayjs(messageDate).format("DD.MM.YY HH:mm");
 
   return (
-      <div
+      <div ref={ref}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
         className={
@@ -79,6 +86,7 @@ const Message: FC<MessageProps> = ({ messages }) => {
             </div>
             {isHovering && user?.uid === messages.uid && (
               <div className={cl.message__icons}>
+                <IconButton className={cl.delete__icon} onClick={pinMessage} color="default"><PushPinIcon /></IconButton>
                <IconButton className={cl.edit__icon} onClick={openModal} color="default"><EditIcon/></IconButton> 
                <IconButton className={cl.delete__icon} onClick={deleteMessage} color="default"><DeleteIcon /></IconButton> 
                 <Modal open={modal} onClose={closeModal}>
@@ -113,5 +121,5 @@ const Message: FC<MessageProps> = ({ messages }) => {
       </div>
   );
 };
-
-export default Message;
+//@ts-ignore
+export default forwardRef(Message);

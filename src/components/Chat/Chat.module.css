@@ -16,6 +16,7 @@
     overflow-y: scroll;
 }
 .chat__content {
+    position: relative;
     border: 1px solid lightgray;
     display: flex;
     flex-direction: column;
@@ -25,9 +26,23 @@
     /* height: 70vh; */
 }
 .chat__header {
+    
     padding:10px 15px ;
     border: 1px solid lightgray;
+    display: flex;
+    justify-content: space-between;
     
+}
+
+.chat__pinned__messages {
+    
+    width:40% ;
+    right: 40px;
+    height: 40%;
+    position: absolute;
+    z-index: 1;
+    overflow-y: auto;
+    border: 1px solid red;
 }
 .chat__messages {
     position: relative;

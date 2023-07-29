@@ -5,6 +5,7 @@ export interface IMessage {
     text?: string;
     createdAt?: any;
     docId?:string
+    isPinned?:boolean
 }
 
 export interface IRoom {

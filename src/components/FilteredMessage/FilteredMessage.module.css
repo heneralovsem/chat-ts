@@ -1,0 +1,30 @@
+/* .my__message {
+    
+} */
+.message__wrapper {
+    padding: 5px 15px 5px 15px;
+    
+}
+.message__wrapper:hover {
+    background-color: lightgrey;
+}
+/* .message {
+    padding: 5px 15px 5px 15px;
+} */
+.message__column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.message__row {
+    display: flex;
+    justify-content: space-between;
+}
+.message__avatar__row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.message__text {
+   padding-left: 5px;
+}
