@@ -4,10 +4,11 @@ import { Context, RoomContext } from "../..";
 import cl from "./Chat.module.css";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { TextField, Button, Avatar, Modal, IconButton } from "@mui/material";
-import { collection, documentId, updateDoc, where,  } from "firebase/firestore";
+import { collection, documentId, onSnapshot, updateDoc, where,  } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
-import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
+import { addDoc, doc, FieldPath, setDoc  } from "firebase/firestore";
+import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage'
 import { query } from "firebase/firestore";
 import { IMessage, IRoom } from "../../types/types";
 import Message from "../Message/Message";
@@ -18,7 +19,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import FilteredMessage from "../FilteredMessage/FilteredMessage";
 
 const Chat: FC = () => {
-  const { auth, firestore } = useContext(Context);
+  const { auth, firestore, storage } = useContext(Context);
   const [user] = useAuthState(auth);
   const [value, setValue] = useState<string>("");
   const [roomName, setRoomName] = useState<string>("");
@@ -36,7 +37,8 @@ const Chat: FC = () => {
   const msgCollectionRef = collection(firestore,`rooms/${selectedRoom}/messages` )
   const lastElement = useRef<HTMLDivElement | any>(null)
   const observer = useRef<IntersectionObserver >()
-  
+  const [file, setFile] = useState<File | null>(null)
+  console.log(file)
   console.log(selectedMessage)
   const openModal = () => {
     setModal(true);
@@ -63,16 +65,61 @@ const Chat: FC = () => {
   const sendMessage = async () => {
     const msgDocRef = doc(msgCollectionRef)
     const id = msgDocRef.id
-    await setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
-      uid: user?.uid,
-      displayName: user?.displayName,
-      photoURL: user?.photoURL,
-      text: value,
-      createdAt: serverTimestamp(),
-      docId: id,
-      isPinned: false
-       
-    });
+    if (file) {
+     
+      const imageRef = ref(storage, `images/${file.name}`)
+      console.log(imageRef)
+      const onSnapshot = await uploadBytes(imageRef, file)
+      const imgURL = await getDownloadURL(onSnapshot.ref)
+      setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
+        uid: user?.uid,
+        displayName: user?.displayName,
+        photoURL: user?.photoURL,
+        text: value,
+        createdAt: serverTimestamp(),
+        docId: id,
+        isPinned: false,
+        imageURL: imgURL, 
+      });
+    }
+      else {
+        setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
+          uid: user?.uid,
+          displayName: user?.displayName,
+          photoURL: user?.photoURL,
+          text: value,
+          createdAt: serverTimestamp(),
+          docId: id,
+          isPinned: false,
+          imageURL: null, 
+        });
+      }
+      
+    //    //@ts-ignore
+    // uploadBytes(imageRef, file).then(onSnapshot =>  {
+    //     return getDownloadURL(onSnapshot.ref)
+    //  }).then(imgURL => {
+    //    setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
+    //     uid: user?.uid,
+    //     displayName: user?.displayName,
+    //     photoURL: user?.photoURL,
+    //     text: value,
+    //     createdAt: serverTimestamp(),
+    //     docId: id,
+    //     isPinned: false,
+    //     imageURL: imgURL, 
+    //   });
+    //  })
+    // await setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
+    //   uid: user?.uid,
+    //   displayName: user?.displayName,
+    //   photoURL: user?.photoURL,
+    //   text: value,
+    //   createdAt: serverTimestamp(),
+    //   docId: id,
+    //   isPinned: false,
+      
+    // });
     setValue("");
     updateDoc(roomRef, {
       timestamp: serverTimestamp()
@@ -115,7 +162,6 @@ const Chat: FC = () => {
     //  refTest.current.scrollIntoView()
      
   }
-  console.log(messages?.[30])
   // if (isShowPinned) {
   //   const [messages, loading] = useCollectionData<IMessage>(
   //     query(
@@ -279,6 +325,10 @@ const Chat: FC = () => {
         >
           Send
         </Button>
+        <input type="file" onChange={(event) => {
+          //@ts-ignore
+          setFile(event.target.files?.[0])
+        }} />
       </div>
       </div>
     </div>

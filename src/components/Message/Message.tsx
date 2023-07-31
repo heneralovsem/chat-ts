@@ -117,6 +117,8 @@ const Message: FC<MessageProps> = ({ messages }, ref) => {
             )}
           </div>
           <p className={cl.message__text}>{messages.text}</p>
+         {messages.imageURL && <div> <img className={cl.message__img} src={messages.imageURL} alt="" /></div> } 
+          
         </div>
       </div>
   );

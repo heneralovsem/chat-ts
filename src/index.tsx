@@ -8,6 +8,7 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyALW1CXjEV-3xYNGeH0QlCmh6YQj-mo_tw",
@@ -23,6 +24,7 @@ const analytics = getAnalytics(app)
 
 const auth = getAuth(app)
 const firestore = getFirestore(app)
+const storage = getStorage(app)
 
 
 export const Context = createContext<any| null>(null)
@@ -36,6 +38,7 @@ root.render(
     app,
     firestore,
     auth,
+    storage
   }}>
     <App />
     </Context.Provider>

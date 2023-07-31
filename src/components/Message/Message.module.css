@@ -58,3 +58,7 @@
     color: #242424;
     transition: 0.5s;
 }
+.message__img {
+    width: 200px;
+    height: 100px;
+}

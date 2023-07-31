@@ -6,6 +6,7 @@ export interface IMessage {
     createdAt?: any;
     docId?:string
     isPinned?:boolean
+    imageURL?:string | null
 }
 
 export interface IRoom {

@@ -1,3 +1,24 @@
 .room__wrapper {
     border: 1px solid lightgray;
+    height: 25%;
+    padding: 5px;
+    word-wrap: break-word;
+}
+.room__name {
+    padding-bottom:8px;
+}
+.room__message {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.room__avatar__row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    
+}
+.room__message__text {
+    width: 90%;
+    padding-left: 5px;
 }
