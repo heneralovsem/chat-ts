@@ -28,28 +28,6 @@
 .message__text {
    padding-left: 5px;
 }
-.comment__modal {
-    background: whitesmoke;
-    padding: 40px 0;
-    font-size: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    display: flex;
-    gap: 20px;
-    flex-direction: column;
-    text-align: center;
-}
-.modal__text {
-    width: 250px;
-    margin: 0 auto;
-}
-.modal__btn {
-    width: 150px;
-    margin: 0 auto;
-}
 .edit__icon:hover {
     color: #242424;
     transition: 0.5s;

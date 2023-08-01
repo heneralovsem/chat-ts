@@ -11,6 +11,7 @@ import { updateDoc, collection, doc, deleteDoc } from "firebase/firestore";
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import EditMessageModal from "../EditMessageModal/EditMessageModal";
 
 interface MessageProps {
   messages: IMessage;
@@ -43,6 +44,7 @@ const Message: FC<MessageProps> = ({ messages }, ref) => {
     setModal(false);
   };
   const editMessage = () => {
+    closeModal()
     updateDoc(msgRef, {
       text: editedValue,
     });
@@ -89,32 +91,9 @@ const Message: FC<MessageProps> = ({ messages }, ref) => {
                 <IconButton className={cl.delete__icon} onClick={pinMessage} color="default"><PushPinIcon /></IconButton>
                <IconButton className={cl.edit__icon} onClick={openModal} color="default"><EditIcon/></IconButton> 
                <IconButton className={cl.delete__icon} onClick={deleteMessage} color="default"><DeleteIcon /></IconButton> 
-                <Modal open={modal} onClose={closeModal}>
-                  <div className={cl.comment__modal}>
-                    <div>
-                      {" "}
-                      <TextField
-                        multiline
-                        maxRows={4}
-                        value={editedValue}
-                        className={cl.modal__text}
-                        onChange={(event) => setEditedValue(event.target.value)}
-                      ></TextField>{" "}
-                    </div>
-                    <div>
-                      <Button
-                        className={cl.modal__btn}
-                        variant="outlined"
-                        onClick={editMessage}
-                      >
-                        {" "}
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </Modal>
               </div>
             )}
+            <EditMessageModal editedValue={editedValue} setEditedValue={setEditedValue} editMessage={editMessage} modal={modal} closeModal={closeModal}/>
           </div>
           <p className={cl.message__text}>{messages.text}</p>
          {messages.imageURL && <div> <img className={cl.message__img} src={messages.imageURL} alt="" /></div> } 

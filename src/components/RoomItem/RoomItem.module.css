@@ -3,6 +3,8 @@
     height: 25%;
     padding: 5px;
     word-wrap: break-word;
+    
+    
 }
 .room__name {
     padding-bottom:8px;
@@ -21,4 +23,7 @@
 .room__message__text {
     width: 90%;
     padding-left: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
