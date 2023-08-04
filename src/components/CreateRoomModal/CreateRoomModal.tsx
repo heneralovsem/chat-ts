@@ -17,12 +17,26 @@ closeModal: any;
 }
 const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, roomMembers, setRoomMembers, roomName, setRoomName, createRoom, modal, closeModal}) => {
 
+  const [roomType, setRoomType] = useState<string>('')
+  const selectDirectMessage = () => {
+    setRoomType('directMessage')
+    setRoomStatus('dm')
+    setRoomName('DMtest2')
+  }
+  const onCloseModal = () => {
+    closeModal()
+    setRoomMembers('')
+    setRoomStatus('public')
+    setRoomType('')
+    setRoomName('')
+  }
+
 
     return (
         <div>
             
-            <Modal open={modal} onClose={closeModal}>
-            <div className={cl.modal__container}>
+            <Modal open={modal} onClose={onCloseModal}>
+              {roomType === 'room' ? <div className={cl.modal__container}>
             <input
               type="radio"
               name="status"
@@ -64,7 +78,25 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
             <Button variant="outlined" onClick={createRoom}>
               Create room
             </Button>
-          </div>
+          </div> : roomType === 'directMessage' ? <div className={cl.modal__container}>
+            
+              <TextField
+                value={roomMembers}
+                onChange={(e) => setRoomMembers(e.target.value)}
+                fullWidth
+                maxRows={2}
+                className={cl.chat__input}
+                placeholder="Invite..."
+                variant="outlined"
+              />
+            <Button variant="outlined" onClick={createRoom}>
+              Start a conversation
+            </Button>
+          </div> : <div className={cl.modal__container}>
+            <Button onClick={() => setRoomType('room')}>Create room</Button>
+            <Button onClick={selectDirectMessage}>Direct message</Button>
+          </div>}
+            
             </Modal>
         </div>
     )

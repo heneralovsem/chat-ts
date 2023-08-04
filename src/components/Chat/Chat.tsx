@@ -184,7 +184,7 @@ const Chat: FC = () => {
                 setIsScrolling={setIsScrolling}
                 key={room.name}
               />
-            ) : room.status === "private" &&
+            ) : room.status === "private" || room.status === 'dm' &&
               room.users?.includes(user?.displayName) ? (
               <RoomItem
                 isScrolling={isScrolling}

@@ -5,6 +5,7 @@ import { Context, RoomContext } from '../..';
 import { collection, query, orderBy } from 'firebase/firestore';
 import { IMessage } from '../../types/types';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import cl from './RoomItem.module.css'
 import dayjs from 'dayjs'
 
@@ -17,6 +18,7 @@ interface RoomItemProps {
 
 const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling}) => {
 const { auth, firestore } = useContext(Context);
+const [user] = useAuthState(auth);
 const [messages, loading] = useCollectionData<IMessage>(
     query(
         collection(firestore, `rooms/${room.name}/messages`),
@@ -38,7 +40,7 @@ const lastMessageDate = lastMessage?.createdAt && lastMessage.createdAt.toDate()
     
     return (
         <div className={cl.room__wrapper} onClick={selectRoom}>
-            <h1 className={cl.room__name}>{room.name}</h1>
+            {room.status === 'dm'  && room.users ?  <div>{room.users[0] === user?.displayName ? <h1 className={cl.room__name}>{room.users[1] }</h1> : <h1 className={cl.room__name}>{room.users[0]}</h1> } </div> : <h1 className={cl.room__name}>{room.name}</h1>}
             {lastMessage && <div className={cl.room__message}> <div className={cl.room__avatar__row}> <Avatar src={lastMessage?.photoURL}/>
             <span>{lastMessage?.displayName}</span> <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span> </div> <div>
            <p className={cl.room__message__text}>{lastMessage?.text}</p>
