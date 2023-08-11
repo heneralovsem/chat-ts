@@ -7,11 +7,13 @@ export interface IMessage {
     docId?:string
     isPinned?:boolean
     imageURL?:string | null
+    repliedMessage?:any
 }
 
 export interface IRoom {
     name?: string;
     status?: string;
+    docId?:string;
     timestamp?:any;
     users?: Array<any>;
 }

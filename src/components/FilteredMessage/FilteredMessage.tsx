@@ -63,6 +63,7 @@ const FilteredMessage: FC<FilteredMessageProps> = ({message, selectedMessage, se
             </div>
           </div>
           <p className={cl.message__text}>{message.text}</p>
+          {message.imageURL && <div> <img className={cl.message__img} src={message.imageURL} alt="" /></div> } 
         </div>
         </div>
     )

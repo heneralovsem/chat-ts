@@ -3,6 +3,7 @@
 } */
 .message__wrapper {
     padding: 5px 15px 5px 15px;
+    word-wrap: break-word;
     
 }
 .message__wrapper:hover {
@@ -27,4 +28,8 @@
 }
 .message__text {
    padding-left: 5px;
+}
+.message__img {
+    width: 200px;
+    height: 100px;
 }

@@ -21,7 +21,6 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
   const selectDirectMessage = () => {
     setRoomType('directMessage')
     setRoomStatus('dm')
-    setRoomName('DMtest2')
   }
   const onCloseModal = () => {
     closeModal()

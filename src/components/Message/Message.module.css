@@ -37,6 +37,21 @@
     transition: 0.5s;
 }
 .message__img {
-    width: 200px;
-    height: 100px;
+    width: 350px;
+    height: 200px;
 }
+.message__icons {
+    display: flex;
+}
+.messages__replied__message {
+    padding-top: 10px;
+    padding-left: 5px;
+    display: flex;
+    gap: 5px;
+    font-size: 12px;
+    align-items: center;
+}
+/* .chat__replied__message__avatar__row {
+    display: flex;
+    align-items: center;
+} */

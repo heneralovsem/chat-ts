@@ -11,14 +11,17 @@ import { updateDoc, collection, doc, deleteDoc } from "firebase/firestore";
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import ReplyIcon from '@mui/icons-material/Reply'
 import EditMessageModal from "../EditMessageModal/EditMessageModal";
 
 interface MessageProps {
   messages: IMessage;
   ref: any;
+  setRepliedMessage: any
+  setIsReplying: (name: boolean) => void;
 }
 
-const Message: FC<MessageProps> = ({ messages }, ref) => {
+const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying }, ref) => {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
@@ -43,6 +46,14 @@ const Message: FC<MessageProps> = ({ messages }, ref) => {
   const closeModal = () => {
     setModal(false);
   };
+  const replyToMessage = () => {
+    setIsReplying(true);
+    setRepliedMessage({
+      avatar: messages.photoURL,
+      displayName: messages.displayName,
+      text: messages.text
+    })
+  }
   const editMessage = () => {
     closeModal()
     updateDoc(msgRef, {
@@ -80,19 +91,31 @@ const Message: FC<MessageProps> = ({ messages }, ref) => {
         }
       >
         <div className={cl.message__column}>
+          {messages.repliedMessage && Object.values(messages.repliedMessage).some(x => (x !== null && x !== '')) &&  <div className={cl.messages__replied__message}>
+            <Avatar sx={{width: 24, height: 24}} className={cl.chat__replied__message__avatar} src={messages.repliedMessage.avatar} />
+            <span className={cl.chat__replied__message__name}>{messages.repliedMessage.displayName}</span>
+            <span className={cl.chat__replied__message__text}>{messages.repliedMessage.text}</span>
+           </div>}
+       
           <div className={cl.message__row}>
             <div className={cl.message__avatar__row}>
               <Avatar src={messages.photoURL} />
               <span>{messages.displayName}</span>
               <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span>
             </div>
-            {isHovering && user?.uid === messages.uid && (
+            {isHovering && 
               <div className={cl.message__icons}>
+            <div className={cl.message__public__icons}>
+                <IconButton className={cl.delete__icon} onClick={replyToMessage} color="default"><ReplyIcon/></IconButton>
                 <IconButton className={cl.delete__icon} onClick={pinMessage} color="default"><PushPinIcon /></IconButton>
-               <IconButton className={cl.edit__icon} onClick={openModal} color="default"><EditIcon/></IconButton> 
-               <IconButton className={cl.delete__icon} onClick={deleteMessage} color="default"><DeleteIcon /></IconButton> 
+              </div>
+            {isHovering && user?.uid === messages.uid && (
+              <div className={cl.message__private__icons}>
+                <IconButton className={cl.edit__icon} onClick={openModal} color="default"><EditIcon/></IconButton> 
+                <IconButton className={cl.delete__icon} onClick={deleteMessage} color="default"><DeleteIcon /></IconButton> 
               </div>
             )}
+            </div>}
             <EditMessageModal editedValue={editedValue} setEditedValue={setEditedValue} editMessage={editMessage} modal={modal} closeModal={closeModal}/>
           </div>
           <p className={cl.message__text}>{messages.text}</p>

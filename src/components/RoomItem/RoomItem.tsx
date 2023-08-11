@@ -13,23 +13,35 @@ interface RoomItemProps {
     room: IRoom;
     isScrolling: boolean;
     setIsScrolling: any;
+    setSelectedRoomName:(name: string) => void,
 }
 
 
-const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling}) => {
+const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling, setSelectedRoomName}) => {
 const { auth, firestore } = useContext(Context);
 const [user] = useAuthState(auth);
 const [messages, loading] = useCollectionData<IMessage>(
     query(
-        collection(firestore, `rooms/${room.name}/messages`),
+        collection(firestore, `rooms/${room.docId}/messages`),
         orderBy("createdAt")
     )
     );
 const lastMessage = messages?.[messages?.length - 1]
 const {selectedRoom, setSelectedRoom} = useContext(RoomContext)
 const selectRoom = () => {
-    setSelectedRoom(room.name)
+    setSelectedRoom(room.docId)
     setIsScrolling(false)
+    if (room.name) {
+        setSelectedRoomName(room.name)
+    }
+    else if ( room.users && room.users[0] === user?.displayName) {
+            setSelectedRoomName(room.users[1])
+    }
+    else if (room.users) {
+        setSelectedRoomName(room.users[0])
+    }
+    
+    
 }
 const lastMessageDate = lastMessage?.createdAt && lastMessage.createdAt.toDate()
     const currentDate = new Date ()
