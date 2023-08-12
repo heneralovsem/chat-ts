@@ -3,7 +3,19 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Context, RoomContext } from "../..";
 import cl from "./Chat.module.css";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { TextField, Button, Modal, IconButton, InputAdornment, Select, SelectChangeEvent, MenuItem, FormControl, InputLabel, Avatar } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Modal,
+  IconButton,
+  InputAdornment,
+  Select,
+  SelectChangeEvent,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Avatar,
+} from "@mui/material";
 import { collection, updateDoc, where } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
@@ -16,6 +28,9 @@ import RoomItem from "../RoomItem/RoomItem";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import Loader from "../Loader/Loader";
 import PushPinIcon from "@mui/icons-material/PushPin";
+import SearchIcon from "@mui/icons-material/Search";
+import SendIcon from "@mui/icons-material/Send";
+import AddIcon from "@mui/icons-material/Add";
 import FilteredMessage from "../FilteredMessage/FilteredMessage";
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 
@@ -25,28 +40,31 @@ const Chat: FC = () => {
   const [value, setValue] = useState<string>("");
   const [roomName, setRoomName] = useState<string>("");
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
-  const [selectedRoomName, setSelectedRoomName] = useState<string>('General')
+  const [selectedRoomName, setSelectedRoomName] = useState<string>("General");
+  const [selectedRoomUsers, setSelectedRoomUsers] = useState<Array<any>>([]);
   const [roomStatus, setRoomStatus] = useState<string>("public");
   const [roomMembers, setRoomMembers] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
+  const [addUsersModal, setAddUsersModal] = useState<boolean>(false);
+  const [addedUsers, setAddedUsers] = useState<string>("");
   const [isScrolling, setIsScrolling] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShowPinned, setIsShowPinned] = useState<boolean>(false);
   const [selectedMessage, setSelectedMessage] = useState<string>("");
-  const [filterType, setFilterType] = useState<string>('from:user')
-  const [searchInpValue, setSearchInpValue] = useState<string>('')
-  const [searchedValue, setSearchedValue] = useState<string>('')
-  const [isSearching, setIsSearching] = useState<boolean>(false)
+  const [filterType, setFilterType] = useState<string>("from:user");
+  const [searchInpValue, setSearchInpValue] = useState<string>("");
+  const [searchedValue, setSearchedValue] = useState<string>("");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const [repliedMessage, setRepliedMessage] = useState({
-    avatar: '',
-    displayName: '',
-    text: '',
-  })
-  const [isReplying, setIsReplying] = useState<boolean>(false)
+    avatar: "",
+    displayName: "",
+    text: "",
+  });
+  const [isReplying, setIsReplying] = useState<boolean>(false);
   const refTimer = useRef<number | null>(null);
   const roomRef = doc(firestore, `rooms`, selectedRoom);
-  const roomCollectionRef = collection(firestore, 'rooms')
+  const roomCollectionRef = collection(firestore, "rooms");
   const msgCollectionRef = collection(
     firestore,
     `rooms/${selectedRoom}/messages`
@@ -62,6 +80,15 @@ const Chat: FC = () => {
   const closeModal = () => {
     setModal(false);
   };
+  const closeAddUsersModal = () => {
+    setAddUsersModal(false);
+  };
+  const addUsers = () => {
+    updateDoc(roomRef, {
+      users: [...selectedRoomUsers, ...addedUsers.split(',')]
+    });
+    closeAddUsersModal()
+  }
   const showButton = () => {
     if (refTimer.current !== null) return;
     setIsRunning(true);
@@ -95,7 +122,7 @@ const Chat: FC = () => {
         docId: id,
         isPinned: false,
         imageURL: imgURL,
-        repliedMessage: repliedMessage
+        repliedMessage: repliedMessage,
       });
     } else {
       setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
@@ -107,12 +134,12 @@ const Chat: FC = () => {
         docId: id,
         isPinned: false,
         imageURL: null,
-        repliedMessage: repliedMessage
+        repliedMessage: repliedMessage,
       });
     }
     setValue("");
-    setFile(null)
-    closeReply()
+    setFile(null);
+    closeReply();
     updateDoc(roomRef, {
       timestamp: serverTimestamp(),
     });
@@ -124,7 +151,7 @@ const Chat: FC = () => {
   };
   const createRoom = async (e: React.MouseEvent) => {
     const roomDocRef = doc(roomCollectionRef);
-    const id = roomDocRef.id
+    const id = roomDocRef.id;
     await setDoc(doc(firestore, "rooms", `${id}`), {
       name: roomName,
       status: roomStatus,
@@ -151,7 +178,7 @@ const Chat: FC = () => {
   const [hasLink] = useCollectionData<IMessage>(
     query(
       collection(firestore, `rooms/${selectedRoom}/messages`),
-      where("imageURL", '!=', null  ),
+      where("imageURL", "!=", null)
     )
   );
   const [messages] = useCollectionData<IMessage>(
@@ -163,35 +190,34 @@ const Chat: FC = () => {
   const refTest = useRef<any | null>(null);
   const showPinned = () => {
     setIsShowPinned(!isShowPinned);
-    setIsSearching(false)
-    if (filterType === 'pinned') {
-      setFilterType('from:user')
-    }
-    else {
-      setFilterType('pinned')
+    setIsSearching(false);
+    if (filterType === "pinned") {
+      setFilterType("from:user");
+    } else {
+      setFilterType("pinned");
     }
     console.log(refTest.current);
   };
   const selectHandler = (e: SelectChangeEvent) => {
-     setFilterType(e.target.value)
-     setSearchInpValue('')
-     setIsSearching(false)
-     setIsShowPinned(false)
-  }
+    setFilterType(e.target.value);
+    setSearchInpValue("");
+    setIsSearching(false);
+    setIsShowPinned(false);
+  };
   const searchOnEnter = (e: React.KeyboardEvent) => {
-   if (e.key === "Enter") {
-    setIsSearching(true);
-    setSearchedValue(searchInpValue)
-   }
-  }
+    if (e.key === "Enter") {
+      setIsSearching(true);
+      setSearchedValue(searchInpValue);
+    }
+  };
   const closeReply = () => {
     setIsReplying(false);
     setRepliedMessage({
-      avatar: '',
-      displayName:'',
-      text: '',
-    })
-  }
+      avatar: "",
+      displayName: "",
+      text: "",
+    });
+  };
   const [rooms, loading] = useCollectionData<IRoom>(
     query(collection(firestore, `rooms`), orderBy("timestamp", "desc"))
   );
@@ -241,14 +267,16 @@ const Chat: FC = () => {
                 isScrolling={isScrolling}
                 setIsScrolling={setIsScrolling}
                 setSelectedRoomName={setSelectedRoomName}
+                setSelectedRoomUsers={setSelectedRoomUsers}
                 key={room.name}
               />
-            ) : (room.status === "private" || room.status === 'dm') &&
+            ) : (room.status === "private" || room.status === "dm") &&
               room.users?.includes(user?.displayName) ? (
               <RoomItem
                 isScrolling={isScrolling}
                 setIsScrolling={setIsScrolling}
                 setSelectedRoomName={setSelectedRoomName}
+                setSelectedRoomUsers={setSelectedRoomUsers}
                 room={room}
                 key={room.name}
               />
@@ -277,8 +305,25 @@ const Chat: FC = () => {
               color="default"
             >
               <PushPinIcon />
-              
             </IconButton>
+            <IconButton
+              className={cl.pin__icon}
+              onClick={(e) => setAddUsersModal(true)}
+              color="default"
+            >
+              <AddIcon />
+            </IconButton>
+            <Modal open={addUsersModal} onClose={closeAddUsersModal}>
+              <div className={cl.modal__container}>
+                <TextField
+                  value={addedUsers}
+                  variant="outlined"
+                  placeholder="Add..."
+                  onChange={(e) => setAddedUsers(e.target.value)}
+                ></TextField>
+                <Button variant="outlined" onClick={addUsers}>Apply</Button>
+              </div>
+            </Modal>
             {/* <Select
             className={cl.chat__select}
             size="small"
@@ -292,25 +337,41 @@ const Chat: FC = () => {
               <MenuItem value={`from:user`}>from:user</MenuItem>
             </Select> */}
             <FormControl size="small">
-        <InputLabel id="demo-simple-select-helper-label">Filter by</InputLabel>
-        <Select
-          className={cl.chat__select}
-          labelId="demo-simple-select-helper-label"
-          
-          value={filterType}
-          label="Filter by"
-          size="small"
-          onChange={selectHandler}
-        >
-          <MenuItem value={'from:user'}>from:user</MenuItem>
-          <MenuItem value={'has:file'}>has:file</MenuItem>
-          <MenuItem value={'pinned'}>pinned</MenuItem>
-        </Select>
-      </FormControl>
-            <TextField className={cl.chat__search} onKeyUp={searchOnEnter} value={searchInpValue} onChange={(e) => setSearchInpValue(e.target.value)} size="small" variant="outlined" label={filterType} placeholder="Search..."
-             disabled={filterType !== 'from:user'}
+              <InputLabel id="demo-simple-select-helper-label">
+                Filter by
+              </InputLabel>
+              <Select
+                className={cl.chat__select}
+                labelId="demo-simple-select-helper-label"
+                value={filterType}
+                label="Filter by"
+                size="small"
+                onChange={selectHandler}
+              >
+                <MenuItem value={"from:user"}>from:user</MenuItem>
+                <MenuItem value={"has:file"}>has:file</MenuItem>
+                <MenuItem value={"pinned"}>pinned</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              className={cl.chat__search}
+              onKeyUp={searchOnEnter}
+              value={searchInpValue}
+              onChange={(e) => setSearchInpValue(e.target.value)}
+              size="small"
+              variant="outlined"
+              label={filterType}
+              placeholder="Search..."
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              disabled={filterType !== "from:user"}
             />
-            {filterType === 'pinned' && (
+            {filterType === "pinned" && (
               <div className={cl.chat__pinned__messages}>
                 <h2 className={cl.chat__filter__type}>Pinned messages</h2>
                 {pinnedMessages?.map((message) => (
@@ -324,9 +385,11 @@ const Chat: FC = () => {
                 ))}
               </div>
             )}
-            {isSearching && filterType === 'from:user' && (
+            {isSearching && filterType === "from:user" && (
               <div className={cl.chat__pinned__messages}>
-                <h2 className={cl.chat__filter__type}>Messages from {searchedValue}</h2>
+                <h2 className={cl.chat__filter__type}>
+                  Messages from {searchedValue}
+                </h2>
                 {fromUser?.map((message) => (
                   <FilteredMessage
                     scrollToPinned={scrollToPinned}
@@ -338,18 +401,20 @@ const Chat: FC = () => {
                 ))}
               </div>
             )}
-            {filterType === 'has:file' && (
+            {filterType === "has:file" && (
               <div className={cl.chat__pinned__messages}>
                 <h2 className={cl.chat__filter__type}>Messages with file</h2>
-                {hasLink?.sort((a, b) => b.createdAt - a.createdAt)?.map((message) => (
-                  <FilteredMessage
-                    scrollToPinned={scrollToPinned}
-                    selectedMessage={selectedMessage}
-                    setSelectedMessage={setSelectedMessage}
-                    message={message}
-                    key={message.docId}
-                  />
-                ))}
+                {hasLink
+                  ?.sort((a, b) => b.createdAt - a.createdAt)
+                  ?.map((message) => (
+                    <FilteredMessage
+                      scrollToPinned={scrollToPinned}
+                      selectedMessage={selectedMessage}
+                      setSelectedMessage={setSelectedMessage}
+                      message={message}
+                      key={message.docId}
+                    />
+                  ))}
               </div>
             )}
           </div>
@@ -360,7 +425,13 @@ const Chat: FC = () => {
               const refProps =
                 selectedMessage === message.docId ? { ref: refTest } : {};
               return (
-                <Message {...refProps} messages={message} setRepliedMessage={setRepliedMessage} setIsReplying={setIsReplying} key={message.docId} />
+                <Message
+                  {...refProps}
+                  messages={message}
+                  setRepliedMessage={setRepliedMessage}
+                  setIsReplying={setIsReplying}
+                  key={message.docId}
+                />
               );
             })}
             {isVisible && (
@@ -375,41 +446,64 @@ const Chat: FC = () => {
           </div>
         </div>
         <div className={cl.chat__new__message}>
-          {isReplying &&
-           <div className={cl.chat__replied__message}>
-            <span>Replying to</span>
-            <Avatar sx={{width: 24, height: 24}} className={cl.chat__replied__message__avatar} src={repliedMessage.avatar} />
-            <span className={cl.chat__replied__message__name}>{repliedMessage.displayName}</span>
-            <span className={cl.chat__replied__message__text}>{repliedMessage.text}</span>
-            <button onClick={closeReply}>close</button>
-           </div>
-          }
+          {isReplying && (
+            <div className={cl.chat__replied__message}>
+              <span>Replying to</span>
+              <Avatar
+                sx={{ width: 24, height: 24 }}
+                className={cl.chat__replied__message__avatar}
+                src={repliedMessage.avatar}
+              />
+              <span className={cl.chat__replied__message__name}>
+                {repliedMessage.displayName}
+              </span>
+              <span className={cl.chat__replied__message__text}>
+                {repliedMessage.text}
+              </span>
+              <button onClick={closeReply}>close</button>
+            </div>
+          )}
           <div className={cl.chat__send__wrapper}>
-          <TextField
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyUp={sendOnEnter}
-            fullWidth
-            maxRows={2}
-            size="small"
-            className={cl.chat__input}
-            placeholder="Your message..."
-            variant="outlined"
-          />
-          <Button
-            onClick={sendMessage}
-            className={cl.chat__btn}
-            variant="outlined"
-          >
-            Send
-          </Button>
-          <input
-            type="file"
-            onChange={(event) => {
-              //@ts-ignore
-              setFile(event.target.files?.[0]);
-            }}
-          />
+            <TextField
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyUp={sendOnEnter}
+              fullWidth
+              maxRows={2}
+              size="small"
+              className={cl.chat__input}
+              placeholder="Your message..."
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton color="primary" component="label">
+                      <input
+                        hidden
+                        accept="image/*"
+                        id="icon__button"
+                        multiple
+                        type="file"
+                        onChange={(event) => {
+                          //@ts-ignore
+                          setFile(event.target.files?.[0]);
+                        }}
+                      />
+                      <label htmlFor="icon__button"></label>
+
+                      <AddIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <SendIcon color="primary" onClick={sendMessage} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
           </div>
         </div>
       </div>

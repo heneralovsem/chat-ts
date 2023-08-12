@@ -6,6 +6,7 @@ import { collection, query, orderBy } from 'firebase/firestore';
 import { IMessage } from '../../types/types';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import ImageIcon from '@mui/icons-material/Image';
 import cl from './RoomItem.module.css'
 import dayjs from 'dayjs'
 
@@ -14,10 +15,11 @@ interface RoomItemProps {
     isScrolling: boolean;
     setIsScrolling: any;
     setSelectedRoomName:(name: string) => void,
+    setSelectedRoomUsers: (name: Array<string>) => void
 }
 
 
-const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling, setSelectedRoomName}) => {
+const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling, setSelectedRoomName, setSelectedRoomUsers}) => {
 const { auth, firestore } = useContext(Context);
 const [user] = useAuthState(auth);
 const [messages, loading] = useCollectionData<IMessage>(
@@ -31,6 +33,10 @@ const {selectedRoom, setSelectedRoom} = useContext(RoomContext)
 const selectRoom = () => {
     setSelectedRoom(room.docId)
     setIsScrolling(false)
+    if (room.users) {
+        setSelectedRoomUsers(room.users)
+    }
+   
     if (room.name) {
         setSelectedRoomName(room.name)
     }
@@ -55,7 +61,7 @@ const lastMessageDate = lastMessage?.createdAt && lastMessage.createdAt.toDate()
             {room.status === 'dm'  && room.users ?  <div>{room.users[0] === user?.displayName ? <h1 className={cl.room__name}>{room.users[1] }</h1> : <h1 className={cl.room__name}>{room.users[0]}</h1> } </div> : <h1 className={cl.room__name}>{room.name}</h1>}
             {lastMessage && <div className={cl.room__message}> <div className={cl.room__avatar__row}> <Avatar src={lastMessage?.photoURL}/>
             <span>{lastMessage?.displayName}</span> <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span> </div> <div>
-           <p className={cl.room__message__text}>{lastMessage?.text}</p>
+           <p className={cl.room__message__text}>{lastMessage.imageURL && <ImageIcon/>} {lastMessage?.text}</p>
            </div>
             </div> }
            
