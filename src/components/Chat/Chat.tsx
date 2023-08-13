@@ -1,4 +1,5 @@
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import React, { FC, useContext, useEffect, useMemo, useRef, useState } from "react";
+import {useDebounce} from 'usehooks-ts'
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Context, RoomContext } from "../..";
 import cl from "./Chat.module.css";
@@ -16,7 +17,7 @@ import {
   InputLabel,
   Avatar,
 } from "@mui/material";
-import { collection, updateDoc, where } from "firebase/firestore";
+import { collection, getDocs, limit, limitToLast, updateDoc, where } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
@@ -69,11 +70,15 @@ const Chat: FC = () => {
     firestore,
     `rooms/${selectedRoom}/messages`
   );
+  const msgQuery = useMemo(() => {
+    console.log('pidaras')
+    const msgQuery = query(msgCollectionRef, orderBy('createdAt'))
+    return msgQuery
+  }, [selectedRoom])
+  console.log(selectedRoom)
   const lastElement = useRef<HTMLDivElement | any>(null);
   const observer = useRef<IntersectionObserver>();
   const [file, setFile] = useState<File | null>(null);
-  console.log(file);
-  console.log(selectedMessage);
   const openModal = () => {
     setModal(true);
   };
@@ -104,7 +109,6 @@ const Chat: FC = () => {
     setIsRunning(false);
   };
 
-  console.log(isVisible);
   const sendMessage = async () => {
     const msgDocRef = doc(msgCollectionRef);
     const id = msgDocRef.id;
@@ -181,12 +185,14 @@ const Chat: FC = () => {
       where("imageURL", "!=", null)
     )
   );
-  const [messages] = useCollectionData<IMessage>(
-    query(
-      collection(firestore, `rooms/${selectedRoom}/messages`),
-      orderBy("createdAt")
-    )
-  );
+    const [messages] = useCollectionData<IMessage>(
+      query(
+        msgQuery
+      )
+    );
+  
+  // const memoizedMessages = useMemo(() => messages, [debouncedValue, selectedRoom])
+  
   const refTest = useRef<any | null>(null);
   const showPinned = () => {
     setIsShowPinned(!isShowPinned);
@@ -196,7 +202,6 @@ const Chat: FC = () => {
     } else {
       setFilterType("pinned");
     }
-    console.log(refTest.current);
   };
   const selectHandler = (e: SelectChangeEvent) => {
     setFilterType(e.target.value);
@@ -497,8 +502,8 @@ const Chat: FC = () => {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton>
-                      <SendIcon color="primary" onClick={sendMessage} />
+                    <IconButton color="primary" onClick={sendMessage}>
+                      <SendIcon  />
                     </IconButton>
                   </InputAdornment>
                 ),
