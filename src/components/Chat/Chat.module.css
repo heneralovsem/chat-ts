@@ -157,3 +157,12 @@
 .chat__replied__message__text {
     
 }
+.icon__wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    
+}
+.icon__test:hover {
+    
+}

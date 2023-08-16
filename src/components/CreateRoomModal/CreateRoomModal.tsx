@@ -36,6 +36,7 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
             
             <Modal open={modal} onClose={onCloseModal}>
               {roomType === 'room' ? <div className={cl.modal__container}>
+                <div className={cl.modal__radio__wrapper}>
             <input
               type="radio"
               name="status"
@@ -54,6 +55,7 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
               onChange={(e) => setRoomStatus(e.target.value)}
             />
             <label htmlFor="private">Private</label>
+            </div>
             {roomStatus === "private" && (
               <TextField
                 value={roomMembers}
@@ -92,8 +94,8 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
               Start a conversation
             </Button>
           </div> : <div className={cl.modal__container}>
-            <Button onClick={() => setRoomType('room')}>Create room</Button>
-            <Button onClick={selectDirectMessage}>Direct message</Button>
+            <Button variant="outlined" onClick={() => setRoomType('room')}>Create room</Button>
+            <Button variant="outlined" onClick={selectDirectMessage}>Direct message</Button>
           </div>}
             
             </Modal>

@@ -43,6 +43,7 @@ const Chat: FC = () => {
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
   const [selectedRoomName, setSelectedRoomName] = useState<string>("General");
   const [selectedRoomUsers, setSelectedRoomUsers] = useState<Array<any>>([]);
+  const [selectedRoomStatus, setSelectedRoomStatus] = useState<string | undefined>('')
   const [roomStatus, setRoomStatus] = useState<string>("public");
   const [roomMembers, setRoomMembers] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
@@ -71,7 +72,6 @@ const Chat: FC = () => {
     `rooms/${selectedRoom}/messages`
   );
   const msgQuery = useMemo(() => {
-    console.log('pidaras')
     const msgQuery = query(msgCollectionRef, orderBy('createdAt'))
     return msgQuery
   }, [selectedRoom])
@@ -84,6 +84,9 @@ const Chat: FC = () => {
   };
   const closeModal = () => {
     setModal(false);
+    setRoomMembers('')
+    setRoomStatus('public')
+    setRoomName('')
   };
   const closeAddUsersModal = () => {
     setAddUsersModal(false);
@@ -110,6 +113,7 @@ const Chat: FC = () => {
   };
 
   const sendMessage = async () => {
+    if (value.trim() != '') {
     const msgDocRef = doc(msgCollectionRef);
     const id = msgDocRef.id;
     if (file) {
@@ -147,6 +151,7 @@ const Chat: FC = () => {
     updateDoc(roomRef, {
       timestamp: serverTimestamp(),
     });
+  }
   };
   const sendOnEnter = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -154,7 +159,8 @@ const Chat: FC = () => {
     }
   };
   const createRoom = async (e: React.MouseEvent) => {
-    const roomDocRef = doc(roomCollectionRef);
+    if ((roomStatus != 'dm' && roomName.trim() != '') || (roomStatus =='dm' && roomMembers.trim() != '')) {
+      const roomDocRef = doc(roomCollectionRef);
     const id = roomDocRef.id;
     await setDoc(doc(firestore, "rooms", `${id}`), {
       name: roomName,
@@ -164,6 +170,8 @@ const Chat: FC = () => {
       timestamp: serverTimestamp(),
     });
     closeModal();
+    }
+    
   };
   const [pinnedMessages] = useCollectionData<IMessage>(
     query(
@@ -190,9 +198,6 @@ const Chat: FC = () => {
         msgQuery
       )
     );
-  
-  // const memoizedMessages = useMemo(() => messages, [debouncedValue, selectedRoom])
-  
   const refTest = useRef<any | null>(null);
   const showPinned = () => {
     setIsShowPinned(!isShowPinned);
@@ -273,7 +278,8 @@ const Chat: FC = () => {
                 setIsScrolling={setIsScrolling}
                 setSelectedRoomName={setSelectedRoomName}
                 setSelectedRoomUsers={setSelectedRoomUsers}
-                key={room.name}
+                setSelectedRoomStatus={setSelectedRoomStatus}
+                key={room.docId}
               />
             ) : (room.status === "private" || room.status === "dm") &&
               room.users?.includes(user?.displayName) ? (
@@ -282,12 +288,14 @@ const Chat: FC = () => {
                 setIsScrolling={setIsScrolling}
                 setSelectedRoomName={setSelectedRoomName}
                 setSelectedRoomUsers={setSelectedRoomUsers}
+                setSelectedRoomStatus={setSelectedRoomStatus}
                 room={room}
-                key={room.name}
+                key={room.docId}
               />
             ) : null
           )}
-        <button onClick={openModal}>New room...</button>
+          <div className={cl.icon__wrapper}> <IconButton color="primary" onClick={openModal}><AddIcon/></IconButton></div>
+       
         <CreateRoomModal
           roomStatus={roomStatus}
           setRoomStatus={setRoomStatus}
@@ -311,13 +319,14 @@ const Chat: FC = () => {
             >
               <PushPinIcon />
             </IconButton>
-            <IconButton
+            {selectedRoomStatus === 'private' &&  <IconButton
               className={cl.pin__icon}
               onClick={(e) => setAddUsersModal(true)}
               color="default"
             >
               <AddIcon />
-            </IconButton>
+            </IconButton>}
+           
             <Modal open={addUsersModal} onClose={closeAddUsersModal}>
               <div className={cl.modal__container}>
                 <TextField

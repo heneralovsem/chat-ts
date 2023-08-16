@@ -15,11 +15,12 @@ interface RoomItemProps {
     isScrolling: boolean;
     setIsScrolling: any;
     setSelectedRoomName:(name: string) => void,
+    setSelectedRoomStatus:(name: string | undefined) => void,
     setSelectedRoomUsers: (name: Array<string>) => void
 }
 
 
-const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling, setSelectedRoomName, setSelectedRoomUsers}) => {
+const RoomItem: FC<RoomItemProps> = ({room, isScrolling, setIsScrolling, setSelectedRoomName, setSelectedRoomUsers, setSelectedRoomStatus}) => {
 const { auth, firestore } = useContext(Context);
 const [user] = useAuthState(auth);
 const [messages, loading] = useCollectionData<IMessage>(
@@ -32,6 +33,7 @@ const lastMessage = messages?.[messages?.length - 1]
 const {selectedRoom, setSelectedRoom} = useContext(RoomContext)
 const selectRoom = () => {
     setSelectedRoom(room.docId)
+    setSelectedRoomStatus(room.status)
     setIsScrolling(false)
     if (room.users) {
         setSelectedRoomUsers(room.users)
@@ -58,7 +60,7 @@ const lastMessageDate = lastMessage?.createdAt && lastMessage.createdAt.toDate()
     
     return (
         <div className={cl.room__wrapper} onClick={selectRoom}>
-            {room.status === 'dm'  && room.users ?  <div>{room.users[0] === user?.displayName ? <h1 className={cl.room__name}>{room.users[1] }</h1> : <h1 className={cl.room__name}>{room.users[0]}</h1> } </div> : <h1 className={cl.room__name}>{room.name}</h1>}
+            {room.status === 'dm'  && room.users ?  <div>{room.users[0] === user?.displayName ? <h2 className={cl.room__name}>{room.users[1] }</h2> : <h2 className={cl.room__name}>{room.users[0]}</h2> } </div> : <h2 className={cl.room__name}>{room.name}</h2>}
             {lastMessage && <div className={cl.room__message}> <div className={cl.room__avatar__row}> <Avatar src={lastMessage?.photoURL}/>
             <span>{lastMessage?.displayName}</span> <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span> </div> <div>
            <p className={cl.room__message__text}>{lastMessage.imageURL && <ImageIcon/>} {lastMessage?.text}</p>
