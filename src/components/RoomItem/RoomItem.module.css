@@ -22,8 +22,16 @@
 }
 .room__message__text {
     width: 100%;
-    padding-left: 5px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    padding-left: 5px;
+}
+.img__icon {
+    color: #a9a9a9;
+    margin-left: 4px;
+}
+.room__message__text__wrapper {
+    display: flex;
+    align-items: center;
 }

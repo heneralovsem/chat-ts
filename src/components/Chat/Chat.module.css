@@ -8,14 +8,15 @@
 }
 .chat__rooms {
     border: 1px solid lightgray;
-    overflow-y: hidden;
+    overflow-y: auto;
     width: 25%;
+    position: relative;
     /* height: 70vh; */
 }
-.chat__rooms:hover {
+/* .chat__rooms:hover {
     
     overflow-y: scroll;
-}
+} */
 .chat__rooms::-webkit-scrollbar {
     width: 4px;
 }
@@ -132,9 +133,13 @@
 }
 .chat__scrollbtn {
     position: fixed;
-    width: 50px;
+    background-color: #E3E5ED;
     border-radius: 50%;
     
+    
+}
+.icon__button {
+    background-color: #1976b2;
 }
 .chat__select {
     width: 150px;

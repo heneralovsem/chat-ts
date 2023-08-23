@@ -1,42 +1,16 @@
-/* .loader {
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 10px solid black;
-    animation: rotate 1s infinite linear;
-    margin: 0 auto;
-
-    
-} */
-/* .loader {
-    position: absolute;
-    left: 40%;
-    top: 40%;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 10px solid black;
-    animation: rotate 1s infinite linear;
-    margin: 0 auto;
-
-    
-} */
 .lds__ring {
     display: inline-block;
-    width: 80px;
-    height: 80px;
+    width: 180px;
+    height: 180px;
   }
   .lds__ring div {
     box-sizing: border-box;
     display: block;
     position: absolute;
-    top: 40%;
-    left: 40%;
-    width: 64px;
-    height: 64px;
+    top: 30%;
+    left: 45%;
+    width: 128px;
+    height: 128px;
     margin: 8px;
     border: 8px solid #212121;
     border-radius: 50%;

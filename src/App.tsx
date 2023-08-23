@@ -6,7 +6,7 @@ import AppRouter from './components/AppRouter';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useContext } from 'react';
 import { Context } from '.';
-import Loader from './components/Loader/Loader';
+import MainLoader from './components/MainLoader/MainLoader';
 import { RoomContext } from '.';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
   
   const [selectedRoom, setSelectedRoom] =  useState<string>('General')
   if (loading) {
-    return <Loader/>
+    return <MainLoader/>
   }
 
 

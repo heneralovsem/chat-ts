@@ -8,6 +8,7 @@ export interface IMessage {
     isPinned?:boolean
     imageURL?:string | null
     repliedMessage?:any
+    eventMessage?:boolean
 }
 
 export interface IRoom {

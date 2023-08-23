@@ -7,21 +7,26 @@ import { RoomContext } from "../..";
 import { useAuthState } from "react-firebase-hooks/auth";
 import dayjs from "dayjs";
 import { Modal, TextField, Button } from "@mui/material";
-import { updateDoc, collection, doc, deleteDoc } from "firebase/firestore";
+import { updateDoc, collection, doc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import ReplyIcon from '@mui/icons-material/Reply'
 import EditMessageModal from "../EditMessageModal/EditMessageModal";
+import { DocumentReference } from "firebase/firestore";
 
 interface MessageProps {
   messages: IMessage;
   ref: any;
   setRepliedMessage: any
   setIsReplying: (name: boolean) => void;
+  scrollToFiltered: any
+  setSelectedMessage: (name: string) => void;
+  roomRef: DocumentReference
+  sendEventMessage: (id: string, eventMessage: string) => void
 }
 
-const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying }, ref) => {
+const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying, scrollToFiltered, setSelectedMessage, roomRef, sendEventMessage }, ref) => {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
@@ -51,7 +56,8 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying 
     setRepliedMessage({
       avatar: messages.photoURL,
       displayName: messages.displayName,
-      text: messages.text
+      text: messages.text,
+      id: messages.docId
     })
   }
   const editMessage = () => {
@@ -64,9 +70,20 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying 
     updateDoc(msgRef, {
       isPinned: true
     })
+    const eventMessage = `${user?.displayName} has pinned a message`
+    sendEventMessage(selectedRoom, eventMessage)
+    updateDoc(roomRef, {
+      timestamp: serverTimestamp()
+    })
   }
   const deleteMessage =  async() => {
     await deleteDoc(msgRef)
+  }
+  const getDocId = () => {
+    setSelectedMessage(messages.repliedMessage.id)
+        setTimeout(() => {
+            scrollToFiltered()
+        }, )
   }
 
   const messageDate = messages.createdAt && messages.createdAt.toDate();
@@ -89,9 +106,10 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying 
             ? `${(cl.my__message, cl.message__wrapper)}`
             : `${(cl.message, cl.message__wrapper)}`
         }
-      >
-        <div className={cl.message__column}>
-          {messages.repliedMessage && Object.values(messages.repliedMessage).some(x => (x !== null && x !== '')) &&  <div className={cl.messages__replied__message}>
+      >{messages.eventMessage ? <div className={cl.event__message__wrapper}>
+        <p>{messages.text}</p>
+      </div> : <div className={cl.message__column}>
+          {messages.repliedMessage && Object.values(messages.repliedMessage).some(x => (x !== null && x !== '')) &&  <div onClick={getDocId} className={cl.messages__replied__message}>
             <Avatar sx={{width: 24, height: 24}} className={cl.chat__replied__message__avatar} src={messages.repliedMessage.avatar} />
             <span className={cl.chat__replied__message__name}>{messages.repliedMessage.displayName}</span>
             <span className={cl.chat__replied__message__text}>{messages.repliedMessage.text}</span>
@@ -121,7 +139,8 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying 
           <p className={cl.message__text}>{messages.text}</p>
          {messages.imageURL && <div> <img className={cl.message__img} src={messages.imageURL} alt="" /></div> } 
           
-        </div>
+        </div>}
+        
       </div>
   );
 };
