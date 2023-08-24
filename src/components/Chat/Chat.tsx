@@ -35,8 +35,10 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import Loader from "../Loader/Loader";
 import SendIcon from "@mui/icons-material/Send";
 import AddIcon from "@mui/icons-material/Add";
+import MoodIcon from '@mui/icons-material/Mood';
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 import MessagesFilter from "../MessagesFilter/MessagesFilter";
+import Emojis from "../Emojis/Emojis";
 
 const Chat: FC = () => {
   const { auth, firestore, storage } = useContext(Context);
@@ -65,6 +67,7 @@ const Chat: FC = () => {
     id: "",
   });
   const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [showEmojis, setShowEmojis] = useState<boolean>(false)
   const refTimer = useRef<number | null>(null);
   const roomRef = doc(firestore, `rooms`, selectedRoom);
   const roomCollectionRef = collection(firestore, "rooms");
@@ -237,6 +240,10 @@ const Chat: FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files?.[0])
     e.target.value = ''
+    setTimeout(() => {
+      forceScroll()
+    }, )
+    
   }
   useEffect(() => {
     scrollToBottom();
@@ -356,6 +363,7 @@ const Chat: FC = () => {
                   messages={message}
                   setRepliedMessage={setRepliedMessage}
                   setIsReplying={setIsReplying}
+                  forceScroll={forceScroll}
                   setSelectedMessage={setSelectedMessage}
                   key={message.docId}
                 />
@@ -430,11 +438,19 @@ const Chat: FC = () => {
                   </InputAdornment>
                 ),
                 endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton color="primary" onClick={sendMessage}>
-                      <SendIcon />
+                  <>
+                  <InputAdornment position="start">
+                    <IconButton color="primary" onClick={(e) => setShowEmojis(!showEmojis)}>
+                      <MoodIcon />
                     </IconButton>
+                    {showEmojis && <Emojis value={value} setValue={setValue} setShowEmojis={setShowEmojis} />  }
                   </InputAdornment>
+                   <InputAdornment position="end">
+                   <IconButton color="primary" onClick={sendMessage}>
+                     <SendIcon />
+                   </IconButton>
+                 </InputAdornment>
+                 </>
                 ),
               }}
             />

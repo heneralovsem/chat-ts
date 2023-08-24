@@ -20,13 +20,14 @@ interface MessageProps {
   ref: any;
   setRepliedMessage: any
   setIsReplying: (name: boolean) => void;
+  forceScroll: () => void;
   scrollToFiltered: any
   setSelectedMessage: (name: string) => void;
   roomRef: DocumentReference
   sendEventMessage: (id: string, eventMessage: string) => void
 }
 
-const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying, scrollToFiltered, setSelectedMessage, roomRef, sendEventMessage }, ref) => {
+const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying, forceScroll, scrollToFiltered, setSelectedMessage, roomRef, sendEventMessage }, ref) => {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
@@ -59,6 +60,9 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying,
       text: messages.text,
       id: messages.docId
     })
+    setTimeout(() => {
+      forceScroll()
+    }, )
   }
   const editMessage = () => {
     closeModal()
