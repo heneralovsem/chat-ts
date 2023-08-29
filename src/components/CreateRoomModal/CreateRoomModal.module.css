@@ -21,3 +21,8 @@
     gap: 20px;
     justify-content: center;
 }
+.close__icon__wrapper {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}

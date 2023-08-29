@@ -1,6 +1,8 @@
 import React, { FC, useState } from "react";
 import { Modal, TextField, Button } from "@mui/material";
 import cl from './CreateRoomModal.module.css'
+import CloseIcon from '@mui/icons-material/Close'
+import { IconButton } from '@mui/material'
 
 interface createRoomModalProps {
 roomStatus: string,
@@ -9,33 +11,28 @@ roomMembers: string,
 setRoomMembers: (name: string) => void,
 roomName: string,
 setRoomName: (name: string) => void,
+roomType: string,
+setRoomType: (name: string) => void,
 createRoom: any,
 modal: boolean,
 closeModal: any;
 
 
 }
-const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, roomMembers, setRoomMembers, roomName, setRoomName, createRoom, modal, closeModal}) => {
+const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, roomMembers, setRoomMembers, roomName, setRoomName, roomType, setRoomType, createRoom, modal, closeModal}) => {
 
-  const [roomType, setRoomType] = useState<string>('')
   const selectDirectMessage = () => {
     setRoomType('directMessage')
     setRoomStatus('dm')
-  }
-  const onCloseModal = () => {
-    closeModal()
-    setRoomMembers('')
-    setRoomStatus('public')
-    setRoomType('')
-    setRoomName('')
   }
 
 
     return (
         <div>
             
-            <Modal open={modal} onClose={onCloseModal}>
+            <Modal open={modal} onClose={closeModal}>
               {roomType === 'room' ? <div className={cl.modal__container}>
+              <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
                 <div className={cl.modal__radio__wrapper}>
             <input
               type="radio"
@@ -80,7 +77,7 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
               Create room
             </Button>
           </div> : roomType === 'directMessage' ? <div className={cl.modal__container}>
-            
+          <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
               <TextField
                 value={roomMembers}
                 onChange={(e) => setRoomMembers(e.target.value)}
@@ -94,6 +91,7 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
               Start a conversation
             </Button>
           </div> : <div className={cl.modal__container}>
+          <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
             <Button variant="outlined" onClick={() => setRoomType('room')}>Create room</Button>
             <Button variant="outlined" onClick={selectDirectMessage}>Direct message</Button>
           </div>}

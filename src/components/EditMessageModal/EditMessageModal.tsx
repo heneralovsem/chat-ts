@@ -1,6 +1,8 @@
 import React, { FC, useState } from "react";
 import { Modal, TextField, Button } from "@mui/material";
 import cl from './EditMessageModal.module.css'
+import CloseIcon from '@mui/icons-material/Close'
+import { IconButton } from '@mui/material'
 
 interface EditMessageModalProps {
     editedValue: string | undefined,
@@ -17,6 +19,7 @@ const EditMessageModal: FC<EditMessageModalProps> = ({modal, closeModal, editedV
     return (
             <Modal open={modal} onClose={closeModal}>
                   <div className={cl.comment__modal}>
+                  <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
                     <div>
                       {" "}
                       <TextField

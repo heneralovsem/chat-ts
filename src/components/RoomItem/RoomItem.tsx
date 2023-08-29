@@ -17,6 +17,7 @@ interface RoomItemProps {
   setSelectedRoomName: (name: string) => void;
   setSelectedRoomStatus: (name: string | undefined) => void;
   setSelectedRoomUsers: (name: Array<string>) => void;
+  setContentVisibility: ( name: boolean) => void
 }
 
 const RoomItem: FC<RoomItemProps> = ({
@@ -26,6 +27,7 @@ const RoomItem: FC<RoomItemProps> = ({
   setSelectedRoomName,
   setSelectedRoomUsers,
   setSelectedRoomStatus,
+  setContentVisibility
 }) => {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
@@ -40,6 +42,7 @@ const RoomItem: FC<RoomItemProps> = ({
   const selectRoom = () => {
     setSelectedRoom(room.docId);
     setSelectedRoomStatus(room.status);
+    setContentVisibility(true)
     setIsScrolling(false);
     if (room.users) {
       setSelectedRoomUsers(room.users);

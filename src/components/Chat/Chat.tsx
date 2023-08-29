@@ -18,24 +18,29 @@ import {
   InputAdornment,
   Avatar,
 } from "@mui/material";
-import {
-  collection,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, updateDoc } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { query } from "firebase/firestore";
 import { IMessage, IRoom } from "../../types/types";
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from "uuid";
 import Message from "../Message/Message";
 import RoomItem from "../RoomItem/RoomItem";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import Loader from "../Loader/Loader";
 import SendIcon from "@mui/icons-material/Send";
 import AddIcon from "@mui/icons-material/Add";
-import MoodIcon from '@mui/icons-material/Mood';
+import MoodIcon from "@mui/icons-material/Mood";
+import CloseIcon from '@mui/icons-material/Close'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 import MessagesFilter from "../MessagesFilter/MessagesFilter";
 import Emojis from "../Emojis/Emojis";
@@ -50,9 +55,10 @@ const Chat: FC = () => {
   const [selectedRoomUsers, setSelectedRoomUsers] = useState<Array<any>>([]);
   const [selectedRoomStatus, setSelectedRoomStatus] = useState<
     string | undefined
->("");
+  >("");
   const [roomStatus, setRoomStatus] = useState<string>("public");
   const [roomMembers, setRoomMembers] = useState<string>("");
+  const [roomType, setRoomType] = useState<string>('')
   const [modal, setModal] = useState<boolean>(false);
   const [addUsersModal, setAddUsersModal] = useState<boolean>(false);
   const [addedUsers, setAddedUsers] = useState<string>("");
@@ -67,7 +73,8 @@ const Chat: FC = () => {
     id: "",
   });
   const [isReplying, setIsReplying] = useState<boolean>(false);
-  const [showEmojis, setShowEmojis] = useState<boolean>(false)
+  const [showEmojis, setShowEmojis] = useState<boolean>(false);
+  const [contentVisibility, setContentVisibility] = useState<boolean>(true)
   const refTimer = useRef<number | null>(null);
   const roomRef = doc(firestore, `rooms`, selectedRoom);
   const roomCollectionRef = collection(firestore, "rooms");
@@ -80,11 +87,11 @@ const Chat: FC = () => {
     return msgQuery;
   }, [selectedRoom]);
   console.log(selectedRoom);
-  console.log(typeof(roomRef))
+  console.log(typeof roomRef);
   const lastElement = useRef<HTMLDivElement | any>(null);
   const observer = useRef<IntersectionObserver>();
   const [file, setFile] = useState<File | null | undefined>(null);
-  const [fileLoading, setFileLoading] = useState<number>(0)
+  const [fileLoading, setFileLoading] = useState<number>(0);
   const openModal = () => {
     setModal(true);
   };
@@ -93,6 +100,7 @@ const Chat: FC = () => {
     setRoomMembers("");
     setRoomStatus("public");
     setRoomName("");
+    setRoomType("")
   };
   const closeAddUsersModal = () => {
     setAddUsersModal(false);
@@ -101,11 +109,11 @@ const Chat: FC = () => {
     updateDoc(roomRef, {
       users: [...selectedRoomUsers, ...addedUsers.split(",")],
     });
-    const eventMessage = `${user?.displayName} has added ${addedUsers}`
-    sendEventMessage(selectedRoom, eventMessage)
+    const eventMessage = `${user?.displayName} has added ${addedUsers}`;
+    sendEventMessage(selectedRoom, eventMessage);
     updateDoc(roomRef, {
-      timestamp: serverTimestamp()
-    })
+      timestamp: serverTimestamp(),
+    });
     closeAddUsersModal();
   };
   const showButton = () => {
@@ -131,8 +139,9 @@ const Chat: FC = () => {
         const imageRef = ref(storage, `images/${uuidv4()}-${file.name}`);
         console.log(imageRef);
         const onSnapshot = await uploadBytesResumable(imageRef, file);
-        const progress = (onSnapshot.bytesTransferred / onSnapshot.totalBytes) * 100
-        setFileLoading(progress)
+        const progress =
+          (onSnapshot.bytesTransferred / onSnapshot.totalBytes) * 100;
+        setFileLoading(progress);
         const imgURL = await getDownloadURL(onSnapshot.ref);
 
         setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
@@ -161,7 +170,7 @@ const Chat: FC = () => {
       }
       setValue("");
       setFile(null);
-      setFileLoading(0)
+      setFileLoading(0);
       closeReply();
       updateDoc(roomRef, {
         timestamp: serverTimestamp(),
@@ -174,20 +183,27 @@ const Chat: FC = () => {
     }
   };
   const sendEventMessage = async (id: string, eventMessage: string) => {
-    const eventMessageCollectionRef = collection(firestore, 'rooms', `${id}`, 'messages')
-      const eventMessageDocRef = doc(eventMessageCollectionRef)
-      const eventMessageId = eventMessageDocRef.id
-      await setDoc(doc(firestore, 'rooms', `${id}`, 'messages', `${eventMessageId}` ), {
-          uid: user?.uid,
-          displayName: user?.displayName,
-          photoURL: user?.photoURL,
-          text: eventMessage,
-          createdAt: serverTimestamp(),
-          docId: eventMessageId,
-          eventMessage: true,
-          
-      })
-  }
+    const eventMessageCollectionRef = collection(
+      firestore,
+      "rooms",
+      `${id}`,
+      "messages"
+    );
+    const eventMessageDocRef = doc(eventMessageCollectionRef);
+    const eventMessageId = eventMessageDocRef.id;
+    await setDoc(
+      doc(firestore, "rooms", `${id}`, "messages", `${eventMessageId}`),
+      {
+        uid: user?.uid,
+        displayName: user?.displayName,
+        photoURL: user?.photoURL,
+        text: eventMessage,
+        createdAt: serverTimestamp(),
+        docId: eventMessageId,
+        eventMessage: true,
+      }
+    );
+  };
   const createRoom = async (e: React.MouseEvent) => {
     if (
       (roomStatus !== "dm" && roomName.trim() !== "") ||
@@ -202,10 +218,10 @@ const Chat: FC = () => {
         users: [user?.displayName, ...roomMembers.split(",")],
         timestamp: serverTimestamp(),
       });
-      setSelectedRoomName(roomName)
-      setSelectedRoom(id)
-      const eventMessage = `${user?.displayName} has created a room`
-      sendEventMessage(id, eventMessage)
+      setSelectedRoomName(roomName);
+      setSelectedRoom(id);
+      const eventMessage = `${user?.displayName} has created a room`;
+      sendEventMessage(id, eventMessage);
       closeModal();
     }
   };
@@ -238,12 +254,14 @@ const Chat: FC = () => {
     setSelectedMessage("");
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files?.[0])
-    e.target.value = ''
+    setFile(e.target.files?.[0]);
+    e.target.value = "";
     setTimeout(() => {
-      forceScroll()
-    }, )
-    
+      forceScroll();
+    });
+  };
+  const goBack = () => {
+    setContentVisibility(false)
   }
   useEffect(() => {
     scrollToBottom();
@@ -267,7 +285,7 @@ const Chat: FC = () => {
   }, [isVisible, messages]);
   return (
     <div className={cl.chat__wrapper}>
-      <div className={cl.chat__rooms}>
+      <div className={ `${cl.chat__rooms}  ${!contentVisibility ? cl.rooms__fullwidth : cl.rooms__hidden} `}>
         {loading && <Loader />}
         {!loading &&
           rooms?.map((room) =>
@@ -280,6 +298,7 @@ const Chat: FC = () => {
                 setSelectedRoomUsers={setSelectedRoomUsers}
                 setSelectedRoomStatus={setSelectedRoomStatus}
                 key={room.docId}
+                setContentVisibility={setContentVisibility}
               />
             ) : (room.status === "private" || room.status === "dm") &&
               room.users?.includes(user?.displayName) ? (
@@ -289,6 +308,7 @@ const Chat: FC = () => {
                 setSelectedRoomName={setSelectedRoomName}
                 setSelectedRoomUsers={setSelectedRoomUsers}
                 setSelectedRoomStatus={setSelectedRoomStatus}
+                setContentVisibility={setContentVisibility}
                 room={room}
                 key={room.docId}
               />
@@ -310,14 +330,20 @@ const Chat: FC = () => {
           setRoomMembers={setRoomMembers}
           roomName={roomName}
           setRoomName={setRoomName}
+          roomType={roomType}
+          setRoomType={setRoomType}
           createRoom={createRoom}
           modal={modal}
           closeModal={closeModal}
         />
       </div>
-      <div className={cl.chat__content}>
+      <div className={`${cl.chat__content} ${!contentVisibility && cl.chat__hidden__content}`}>
         <div className={cl.chat__header}>
-          <h1>{selectedRoomName}</h1>
+          <div className={cl.arrowback__icon__wrapper}>
+            <div className={cl.arrowback__icon}><IconButton onClick={goBack}><ArrowBackIcon /></IconButton></div>
+        <h1>{selectedRoomName}</h1>
+        </div>
+          
           <div className={cl.chat__header__icons}>
             {selectedRoomStatus === "private" && (
               <IconButton
@@ -331,6 +357,7 @@ const Chat: FC = () => {
 
             <Modal open={addUsersModal} onClose={closeAddUsersModal}>
               <div className={cl.modal__container}>
+              <div className={cl.close__icon__wrapper}><IconButton onClick={closeAddUsersModal} ><CloseIcon/></IconButton></div>
                 <TextField
                   value={addedUsers}
                   variant="outlined"
@@ -400,10 +427,14 @@ const Chat: FC = () => {
               <button onClick={closeReply}>close</button>
             </div>
           )}
-          {file && <div className={cl.chat__fileupload}>  
-                <p className={cl.file__name}>{file.name}</p>
-                <span className={cl.file__loading__progress}>Loading... {fileLoading}%</span>
-            </div>}
+          {file && (
+            <div className={cl.chat__fileupload}>
+              <p className={cl.file__name}>{file.name}</p>
+              <span className={cl.file__loading__progress}>
+                Loading... {fileLoading}%
+              </span>
+            </div>
+          )}
           <div className={cl.chat__send__wrapper}>
             <TextField
               value={value}
@@ -424,7 +455,8 @@ const Chat: FC = () => {
                         accept="image/*"
                         id="icon__button"
                         type="file"
-                        onChange={ handleFileChange
+                        onChange={
+                          handleFileChange
                           // setFile(event.target.files?.[0]);
                         }
                         // onClick={(e:React.MouseEvent<HTMLInputElement>) => {
@@ -439,18 +471,27 @@ const Chat: FC = () => {
                 ),
                 endAdornment: (
                   <>
-                  <InputAdornment position="start">
-                    <IconButton color="primary" onClick={(e) => setShowEmojis(!showEmojis)}>
-                      <MoodIcon />
-                    </IconButton>
-                    {showEmojis && <Emojis value={value} setValue={setValue} setShowEmojis={setShowEmojis} />  }
-                  </InputAdornment>
-                   <InputAdornment position="end">
-                   <IconButton color="primary" onClick={sendMessage}>
-                     <SendIcon />
-                   </IconButton>
-                 </InputAdornment>
-                 </>
+                    <InputAdornment position="start">
+                      <IconButton
+                        color="primary"
+                        onClick={(e) => setShowEmojis(!showEmojis)}
+                      >
+                        <MoodIcon />
+                      </IconButton>
+                      {showEmojis && (
+                        <Emojis
+                          value={value}
+                          setValue={setValue}
+                          setShowEmojis={setShowEmojis}
+                        />
+                      )}
+                    </InputAdornment>
+                    <InputAdornment position="end">
+                      <IconButton color="primary" onClick={sendMessage}>
+                        <SendIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  </>
                 ),
               }}
             />

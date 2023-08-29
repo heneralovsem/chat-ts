@@ -76,6 +76,7 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
       }
     return (
         <div className={cl.message__filter__wrapper}>
+          <div className={cl.message__filter__icons}></div>
             <IconButton
               className={cl.pin__icon}
               onClick={showPinned}
@@ -83,6 +84,7 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
             >
               <PushPinIcon />
             </IconButton>
+            <div className={cl.message__filter__search__wrapper}>
             <FormControl size="small">
               <InputLabel id="demo-simple-select-helper-label">
                 Filter by
@@ -118,10 +120,27 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
               }}
               disabled={filterType !== "from:user"}
             />
+            </div>
             {filterType === "pinned" && (
-              <div className={cl.chat__pinned__messages}>
-                <IconButton onClick={closeModal} className={cl.close__icon__wrapper}><CloseIcon/></IconButton>
-                <h2 className={cl.chat__filter__type}>Pinned messages</h2>
+              // <div className={cl.chat__pinned__messages}>
+              //   <IconButton onClick={closeModal} className={cl.close__icon__wrapper}><CloseIcon/></IconButton>
+              //   <h2 className={cl.chat__filter__type}>Pinned messages</h2>
+              //   {pinnedMessages?.map((message) => (
+              //     <FilteredMessage
+              //       scrollToPinned={scrollToFiltered}
+              //       selectedMessage={selectedMessage}
+              //       setSelectedMessage={setSelectedMessage}
+              //       message={message}
+              //       key={message.docId}
+              //     />
+              //   ))}
+              // </div>
+              <Modal open={filterType === 'pinned'} onClose={closeModal}>
+              <div className={cl.chat__filtered__modal}>
+                <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div> 
+                <h2 className={cl.chat__filter__type}>
+                  Pinned messages
+                </h2>
                 {pinnedMessages?.map((message) => (
                   <FilteredMessage
                     scrollToPinned={scrollToFiltered}
@@ -132,22 +151,7 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
                   />
                 ))}
               </div>
-              // <Modal open={filterType === 'pinned'} onClose={closeModal}>
-              // <div className={cl.chat__filtered__modal}>
-              //   <h2 className={cl.chat__filter__type}>
-              //     Pinned messages
-              //   </h2>
-              //   {fromUser?.map((message) => (
-              //     <FilteredMessage
-              //       scrollToPinned={scrollToFiltered}
-              //       selectedMessage={selectedMessage}
-              //       setSelectedMessage={setSelectedMessage}
-              //       message={message}
-              //       key={message.docId}
-              //     />
-              //   ))}
-              // </div>
-              // </Modal>
+              </Modal>
             )}
             {isSearching && filterType === "from:user" && (
               // <div className={cl.chat__pinned__messages}>
@@ -166,6 +170,7 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
               // </div>
               <Modal open={filterType === 'from:user'} onClose={closeModal}>
               <div className={cl.chat__filtered__modal}>
+              <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
                 <h2 className={cl.chat__filter__type}>
                   Messages from {searchedValue}
                 </h2>
@@ -198,6 +203,7 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
             // </div>
               <Modal open={filterType === 'has:file'} onClose={closeModal}>
               <div className={cl.chat__filtered__modal}>
+              <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
                 <h2 className={cl.chat__filter__type}>Messages with file</h2>
                 {hasFile
                   ?.sort((a, b) => b.createdAt - a.createdAt)

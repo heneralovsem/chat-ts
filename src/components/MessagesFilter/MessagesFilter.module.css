@@ -57,3 +57,13 @@
     position: absolute;
     right: 0px;
 }
+.chat__search {
+    max-width: 180px;
+}
+.message__filter__search__wrapper {
+    display: flex;
+    gap: 8px;
+}
+@media screen and (max-width:1024px) {
+   
+}
