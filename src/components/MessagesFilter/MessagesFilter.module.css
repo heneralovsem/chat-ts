@@ -64,6 +64,52 @@
     display: flex;
     gap: 8px;
 }
+.message__filter__search__icon {
+    display: none;
+}
+.modal__search {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
 @media screen and (max-width:1024px) {
+    .message__filter__search__wrapper {
+        display: none;
+    }
+   .message__filter__search__icon {
+    display: block;
+   }
    
+   .chat__filtered__modal {
+    width: 50%;
+   }
+}
+@media screen and (max-width:768px) {
+    .chat__filtered__modal {
+        width: 60%;
+        height: 60%;
+       }
+       .chat__select {
+        width: 150px;
+       }
+       .chat__search {
+        width: 150px;
+       }
+}
+@media screen and (max-width:560px) {
+    .modal__search {
+        flex-direction: column;
+    }
+    .chat__select {
+        width: 180px;
+    }
+    .chat__search {
+        width: 200px;
+    }
+    
+}
+@media screen and (max-width:450px) {
+    .chat__filtered__modal {
+        width: 80%;
+    }
 }

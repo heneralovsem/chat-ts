@@ -341,7 +341,7 @@ const Chat: FC = () => {
         <div className={cl.chat__header}>
           <div className={cl.arrowback__icon__wrapper}>
             <div className={cl.arrowback__icon}><IconButton onClick={goBack}><ArrowBackIcon /></IconButton></div>
-        <h1>{selectedRoomName}</h1>
+        <h2 className={cl.chat__room__name}>{selectedRoomName}</h2>
         </div>
           
           <div className={cl.chat__header__icons}>

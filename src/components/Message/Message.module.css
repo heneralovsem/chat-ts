@@ -59,3 +59,9 @@
     text-align: center;
     color: #1976d2;
 }
+@media screen and (max-width:450px) {
+    .message__img {
+        width: 250px;
+        height: 150px;
+    }
+}
