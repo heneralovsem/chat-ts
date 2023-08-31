@@ -18,7 +18,7 @@ const Emojis: FC<EmojisProps> = ({value, setValue, setShowEmojis}) => {
 
     return (
         <div className={cl.emojis__wrapper}>
-            <EmojiPicker onEmojiClick={onEmojiClick} />
+            <EmojiPicker width={300} onEmojiClick={onEmojiClick} />
         </div>
     )
 }

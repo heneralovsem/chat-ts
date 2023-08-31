@@ -3,3 +3,8 @@
     right: 20px;
     bottom: 40px;
 }
+@media screen and (max-width:450px) {
+    .emojis__wrapper {
+        right: 10px;
+    }
+}

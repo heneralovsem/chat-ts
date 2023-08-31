@@ -111,7 +111,7 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying,
             : `${(cl.message, cl.message__wrapper)}`
         }
       >{messages.eventMessage ? <div className={cl.event__message__wrapper}>
-        <p>{messages.text}</p>
+        <p className={cl.message__text}>{messages.text}</p>
       </div> : <div className={cl.message__column}>
           {messages.repliedMessage && Object.values(messages.repliedMessage).some(x => (x !== null && x !== '')) &&  <div onClick={getDocId} className={cl.messages__replied__message}>
             <Avatar sx={{width: 24, height: 24}} className={cl.chat__replied__message__avatar} src={messages.repliedMessage.avatar} />
@@ -121,20 +121,20 @@ const Message: FC<MessageProps> = ({ messages, setRepliedMessage, setIsReplying,
        
           <div className={cl.message__row}>
             <div className={cl.message__avatar__row}>
-              <Avatar src={messages.photoURL} />
-              <span>{messages.displayName}</span>
-              <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span>
+              <Avatar className={cl.message__avatar} src={messages.photoURL} />
+              <span className={cl.message__displayname}>{messages.displayName}</span>
+              <span className={cl.message__date}> {dayDifference > 0 ? fullDate : hoursAndMins}</span>
             </div>
             {isHovering && 
               <div className={cl.message__icons}>
             <div className={cl.message__public__icons}>
-                <IconButton className={cl.delete__icon} onClick={replyToMessage} color="default"><ReplyIcon/></IconButton>
-                <IconButton className={cl.delete__icon} onClick={pinMessage} color="default"><PushPinIcon /></IconButton>
+                <IconButton className={cl.message__icon__button} onClick={replyToMessage} color="default"><ReplyIcon className={cl.message__icon}/></IconButton>
+                <IconButton className={cl.message__icon__button} onClick={pinMessage} color="default"><PushPinIcon className={cl.message__icon}/></IconButton>
               </div>
             {isHovering && user?.uid === messages.uid && (
               <div className={cl.message__private__icons}>
-                <IconButton className={cl.edit__icon} onClick={openModal} color="default"><EditIcon/></IconButton> 
-                <IconButton className={cl.delete__icon} onClick={deleteMessage} color="default"><DeleteIcon /></IconButton> 
+                <IconButton className={cl.message__icon__button} onClick={openModal} color="default"><EditIcon className={cl.message__icon}/></IconButton> 
+                <IconButton className={cl.message__icon__button} onClick={deleteMessage} color="default"><DeleteIcon className={cl.message__icon}/></IconButton> 
               </div>
             )}
             </div>}

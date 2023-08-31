@@ -85,15 +85,15 @@ const MessagesFilter:FC<MessagesFilterProps> = ({selectedMessage, setSelectedMes
         <div className={cl.message__filter__wrapper}>
           <div className={cl.message__filter__icons}></div>
             <IconButton
-              className={cl.pin__icon}
+              className={cl.message__filter__iconbtn}
               onClick={showPinned}
               color="default"
             >
-              <PushPinIcon />
+              <PushPinIcon className={cl.message__filter__icon} />
             </IconButton>
             <div className={cl.message__filter__search__icon}>
-              <IconButton onClick={openSearchModal}>
-                <SearchIcon/>
+              <IconButton className={cl.message__filter__iconbtn} onClick={openSearchModal}>
+                <SearchIcon className={cl.message__filter__icon}/>
               </IconButton>
             </div>
             <div className={cl.message__filter__search__wrapper}>

@@ -8,6 +8,10 @@
 }
 .room__name {
     padding-bottom:8px;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .room__message {
     display: flex;

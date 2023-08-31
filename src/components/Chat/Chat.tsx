@@ -340,18 +340,18 @@ const Chat: FC = () => {
       <div className={`${cl.chat__content} ${!contentVisibility && cl.chat__hidden__content}`}>
         <div className={cl.chat__header}>
           <div className={cl.arrowback__icon__wrapper}>
-            <div className={cl.arrowback__icon}><IconButton onClick={goBack}><ArrowBackIcon /></IconButton></div>
+            <div className={cl.arrowback__icon}><IconButton className={cl.chat__header__iconbtn} onClick={goBack}><ArrowBackIcon className={cl.chat__header__icon} /></IconButton></div>
         <h2 className={cl.chat__room__name}>{selectedRoomName}</h2>
         </div>
           
           <div className={cl.chat__header__icons}>
             {selectedRoomStatus === "private" && (
               <IconButton
-                className={cl.pin__icon}
+                className={cl.chat__header__iconbtn}
                 onClick={(e) => setAddUsersModal(true)}
                 color="default"
               >
-                <AddIcon />
+                <AddIcon className={cl.chat__header__icon} />
               </IconButton>
             )}
 

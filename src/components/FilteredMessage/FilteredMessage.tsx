@@ -58,8 +58,8 @@ const FilteredMessage: FC<FilteredMessageProps> = ({message, selectedMessage, se
           <div className={cl.message__row}>
             <div className={cl.message__avatar__row}>
               <Avatar src={message.photoURL} />
-              <span>{message.displayName}</span>
-              <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span>
+              <span className={cl.message__displayname}>{message.displayName}</span>
+              <span className={cl.message__date}> {dayDifference > 0 ? fullDate : hoursAndMins}</span>
             </div>
           </div>
           <p className={cl.message__text}>{message.text}</p>

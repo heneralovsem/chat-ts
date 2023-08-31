@@ -15,6 +15,7 @@
 }
 .chat__filter__type {
     padding: 10px 15px;
+    width: 90%;
 }
 .message__filter__wrapper {
     display: flex;
@@ -95,6 +96,12 @@
        .chat__search {
         width: 150px;
        }
+       .message__filter__iconbtn {
+        width: 32px;
+    }
+        .message__filter__icon {
+        width: 20px !important;
+    }
 }
 @media screen and (max-width:560px) {
     .modal__search {
@@ -106,10 +113,21 @@
     .chat__search {
         width: 200px;
     }
-    
+    .message__filter__wrapper {
+        gap: 10px;
+    }
+    .chat__filter__type {
+        font-size: 20px;
+    }
 }
 @media screen and (max-width:450px) {
     .chat__filtered__modal {
         width: 80%;
+    }
+    .message__filter__iconbtn {
+        width: 28px;
+    }
+    .message__filter__icon {
+        width: 16px !important;
     }
 }
