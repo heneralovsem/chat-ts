@@ -69,6 +69,7 @@ const RoomItem: FC<RoomItemProps> = ({
 
   return (
     <div className={cl.room__wrapper} onClick={selectRoom}>
+      <div className={cl.room__name__flex}>
       {room.status === "dm" && room.users ? (
         <div>
           {room.users[0] === user?.displayName ? (
@@ -80,6 +81,8 @@ const RoomItem: FC<RoomItemProps> = ({
       ) : (
         <h2 className={cl.room__name}>{room.name}</h2>
       )}
+      <span className={cl.room__date}> {dayDifference > 0 ? fullDate : hoursAndMins}</span>{" "}
+      </div>
       {lastMessage && (
         <div className={cl.room__message}>
           {" "}
@@ -87,7 +90,6 @@ const RoomItem: FC<RoomItemProps> = ({
             {" "}
             <Avatar src={lastMessage?.photoURL} />
             <span>{lastMessage?.displayName}</span>{" "}
-            <span> {dayDifference > 0 ? fullDate : hoursAndMins}</span>{" "}
           </div>{" "}
           <div className={cl.room__message__text__wrapper}>
           {lastMessage.imageURL && <ImageIcon className={cl.img__icon}/>}

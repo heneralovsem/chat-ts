@@ -4,14 +4,22 @@
     padding: 5px;
     word-wrap: break-word;
     
-    
 }
 .room__name {
     padding-bottom:8px;
-    width: 100%;
+    max-width: 300px;
+    font-size: 22px;
     text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: nowrap; 
+}
+.room__name__flex {
+    display: flex;
+    justify-content: space-between;
+}
+.room__date {
+    font-size: 16px;
+    padding-top: 5px;
 }
 .room__message {
     display: flex;
@@ -39,11 +47,48 @@
     display: flex;
     align-items: center;
 }
+@media screen and (max-width:1440px) {
+    .room__name {
+        max-width: 185px;
+        
+    }
+}
 @media screen and (max-width:1024px) {
     .room__avatar__row {
         gap: 5px;
         font-size: 14px;
         
         
+    }
+}
+@media screen and (max-width:900px) {
+    .room__name {
+        font-size: 20px;
+        max-width: 150px;
+    }
+    .room__date {
+        font-size: 14px;
+    }
+}
+@media screen and (max-width:768px) {
+    .room__name {
+        max-width: 300px;
+    }
+}
+@media screen and (max-width:480px) {
+    .room__name {
+        font-size: 18px;
+        max-width: 200px;
+    }
+    .room__date {
+        font-size: 12px;
+    }
+}
+@media screen and (max-width:375px) {
+    .room__name {
+        max-width: 190px;
+    }
+    .room__message__text {
+        font-size: 14px;
     }
 }
