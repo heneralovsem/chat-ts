@@ -7,7 +7,7 @@
     box-sizing: border-box;
     display: block;
     position: absolute;
-    top: 30%;
+    top: 35%;
     left: 45%;
     width: 128px;
     height: 128px;
@@ -25,6 +25,27 @@
   }
   .lds__ring div:nth-child(3) {
     animation-delay: -0.15s;
+  }
+  @media screen and (max-width:768px) {
+    .lds__ring {
+      width: 128px;
+      height: 128px;
+    }
+    .lds__ring div {
+      width: 96px;
+      height: 96px;
+    }
+  }
+  @media screen and (max-width:425px) {
+    .lds__ring {
+      width: 96px;
+      height: 96px;
+    }
+    .lds__ring div {
+      width: 64px;
+      height: 64px;
+      left: 40%;
+    }
   }
   @keyframes lds__ring {
     0% {
