@@ -45,11 +45,14 @@
 }
 .messages__replied__message {
     padding-top: 10px;
-    padding-left: 5px;
+    padding-left: 7px;
     display: flex;
     gap: 5px;
     font-size: 12px;
     align-items: center;
+}
+.chat__replied__message__text {
+    line-height: 22px;
 }
 /* .chat__replied__message__avatar__row {
     display: flex;
@@ -117,6 +120,9 @@
     .message__wrapper {
         padding: 2px 4px 2px 4px;
         
+    }
+    .messages__replied__message {
+        font-size: 10px;
     }
 }
 @media screen and (max-width:375px) {

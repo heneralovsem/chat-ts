@@ -231,6 +231,9 @@
     .chat__header__icon {
         width: 20px !important;
     }
+    .chat__scrollbtn__wrapper {
+        bottom: 100px;
+    }
 }
 @media screen and (max-width:450px) {
     .chat__room__name {
@@ -248,6 +251,9 @@
     }
     .chat__header__icon {
         width: 16px !important;
+    }
+    .chat__scrollbtn__wrapper {
+        right: 50px;
     }
 }
 @media screen and (max-width:375px) {
