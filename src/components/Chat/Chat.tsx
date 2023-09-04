@@ -39,8 +39,8 @@ import Loader from "../Loader/Loader";
 import SendIcon from "@mui/icons-material/Send";
 import AddIcon from "@mui/icons-material/Add";
 import MoodIcon from "@mui/icons-material/Mood";
-import CloseIcon from '@mui/icons-material/Close'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 import MessagesFilter from "../MessagesFilter/MessagesFilter";
 import Emojis from "../Emojis/Emojis";
@@ -58,7 +58,7 @@ const Chat: FC = () => {
   >("");
   const [roomStatus, setRoomStatus] = useState<string>("public");
   const [roomMembers, setRoomMembers] = useState<string>("");
-  const [roomType, setRoomType] = useState<string>('')
+  const [roomType, setRoomType] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
   const [addUsersModal, setAddUsersModal] = useState<boolean>(false);
   const [addedUsers, setAddedUsers] = useState<string>("");
@@ -74,7 +74,7 @@ const Chat: FC = () => {
   });
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
-  const [contentVisibility, setContentVisibility] = useState<boolean>(true)
+  const [contentVisibility, setContentVisibility] = useState<boolean>(true);
   const refTimer = useRef<number | null>(null);
   const roomRef = doc(firestore, `rooms`, selectedRoom);
   const roomCollectionRef = collection(firestore, "rooms");
@@ -100,7 +100,7 @@ const Chat: FC = () => {
     setRoomMembers("");
     setRoomStatus("public");
     setRoomName("");
-    setRoomType("")
+    setRoomType("");
   };
   const closeAddUsersModal = () => {
     setAddUsersModal(false);
@@ -261,8 +261,8 @@ const Chat: FC = () => {
     });
   };
   const goBack = () => {
-    setContentVisibility(false)
-  }
+    setContentVisibility(false);
+  };
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -285,7 +285,11 @@ const Chat: FC = () => {
   }, [isVisible, messages]);
   return (
     <div className={cl.chat__wrapper}>
-      <div className={ `${cl.chat__rooms}  ${!contentVisibility ? cl.rooms__fullwidth : cl.rooms__hidden} `}>
+      <div
+        className={`${cl.chat__rooms}  ${
+          !contentVisibility ? cl.rooms__fullwidth : cl.rooms__hidden
+        } `}
+      >
         {loading && <Loader />}
         {!loading &&
           rooms?.map((room) =>
@@ -337,13 +341,21 @@ const Chat: FC = () => {
           closeModal={closeModal}
         />
       </div>
-      <div className={`${cl.chat__content} ${!contentVisibility && cl.chat__hidden__content}`}>
+      <div
+        className={`${cl.chat__content} ${
+          !contentVisibility && cl.chat__hidden__content
+        }`}
+      >
         <div className={cl.chat__header}>
           <div className={cl.arrowback__icon__wrapper}>
-            <div className={cl.arrowback__icon}><IconButton className={cl.chat__header__iconbtn} onClick={goBack}><ArrowBackIcon className={cl.chat__header__icon} /></IconButton></div>
-        <h2 className={cl.chat__room__name}>{selectedRoomName}</h2>
-        </div>
-          
+            <div className={cl.arrowback__icon}>
+              <IconButton className={cl.chat__header__iconbtn} onClick={goBack}>
+                <ArrowBackIcon className={cl.chat__header__icon} />
+              </IconButton>
+            </div>
+            <h2 className={cl.chat__room__name}>{selectedRoomName}</h2>
+          </div>
+
           <div className={cl.chat__header__icons}>
             {selectedRoomStatus === "private" && (
               <IconButton
@@ -357,10 +369,15 @@ const Chat: FC = () => {
 
             <Modal open={addUsersModal} onClose={closeAddUsersModal}>
               <div className={cl.modal__container}>
-              <div className={cl.close__icon__wrapper}><IconButton onClick={closeAddUsersModal} ><CloseIcon/></IconButton></div>
+                <div className={cl.close__icon__wrapper}>
+                  <IconButton onClick={closeAddUsersModal}>
+                    <CloseIcon />
+                  </IconButton>
+                </div>
                 <TextField
                   value={addedUsers}
                   variant="outlined"
+                  helperText={"Separate users with comma"}
                   placeholder="Add..."
                   onChange={(e) => setAddedUsers(e.target.value)}
                 ></TextField>

@@ -17,7 +17,7 @@ interface RoomItemProps {
   setSelectedRoomName: (name: string) => void;
   setSelectedRoomStatus: (name: string | undefined) => void;
   setSelectedRoomUsers: (name: Array<string>) => void;
-  setContentVisibility: ( name: boolean) => void
+  setContentVisibility: (name: boolean) => void;
 }
 
 const RoomItem: FC<RoomItemProps> = ({
@@ -27,7 +27,7 @@ const RoomItem: FC<RoomItemProps> = ({
   setSelectedRoomName,
   setSelectedRoomUsers,
   setSelectedRoomStatus,
-  setContentVisibility
+  setContentVisibility,
 }) => {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
@@ -42,7 +42,7 @@ const RoomItem: FC<RoomItemProps> = ({
   const selectRoom = () => {
     setSelectedRoom(room.docId);
     setSelectedRoomStatus(room.status);
-    setContentVisibility(true)
+    setContentVisibility(true);
     setIsScrolling(false);
     if (room.users) {
       setSelectedRoomUsers(room.users);
@@ -70,18 +70,21 @@ const RoomItem: FC<RoomItemProps> = ({
   return (
     <div className={cl.room__wrapper} onClick={selectRoom}>
       <div className={cl.room__name__flex}>
-      {room.status === "dm" && room.users ? (
-        <div>
-          {room.users[0] === user?.displayName ? (
-            <h2 className={cl.room__name}>{room.users[1]}</h2>
-          ) : (
-            <h2 className={cl.room__name}>{room.users[0]}</h2>
-          )}{" "}
-        </div>
-      ) : (
-        <h2 className={cl.room__name}>{room.name}</h2>
-      )}
-      <span className={cl.room__date}> {dayDifference > 0 ? fullDate : hoursAndMins}</span>{" "}
+        {room.status === "dm" && room.users ? (
+          <div>
+            {room.users[0] === user?.displayName ? (
+              <h2 className={cl.room__name}>{room.users[1]}</h2>
+            ) : (
+              <h2 className={cl.room__name}>{room.users[0]}</h2>
+            )}{" "}
+          </div>
+        ) : (
+          <h2 className={cl.room__name}>{room.name}</h2>
+        )}
+        <span className={cl.room__date}>
+          {" "}
+          {dayDifference > 0 ? fullDate : hoursAndMins}
+        </span>{" "}
       </div>
       {lastMessage && (
         <div className={cl.room__message}>
@@ -92,10 +95,8 @@ const RoomItem: FC<RoomItemProps> = ({
             <span>{lastMessage?.displayName}</span>{" "}
           </div>{" "}
           <div className={cl.room__message__text__wrapper}>
-          {lastMessage.imageURL && <ImageIcon className={cl.img__icon}/>}
-            <p className={cl.room__message__text}>
-               {lastMessage?.text}
-            </p>
+            {lastMessage.imageURL && <ImageIcon className={cl.img__icon} />}
+            <p className={cl.room__message__text}>{lastMessage?.text}</p>
           </div>
         </div>
       )}

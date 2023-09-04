@@ -15,3 +15,15 @@
         padding: 100px 50px;
         align-items: center;
 }
+@media screen and (max-width:768px) {
+    .login__form {
+        width: 400px;
+        padding: 70px 35px;
+    }
+}
+@media screen and (max-width:425px) {
+    .login__form {
+        width: 280px;
+        padding: 50px 25px;
+    }
+}

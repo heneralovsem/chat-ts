@@ -1,6 +1,6 @@
-.comment__modal {
+.modal__container {
     background: whitesmoke;
-    padding: 40px 0;
+    padding: 40px 20px;
     font-size: 20px;
     position: absolute;
     top: 50%;
@@ -12,16 +12,23 @@
     flex-direction: column;
     text-align: center;
 }
-.modal__text {
-    width: 250px;
-    margin: 0 auto;
-}
 .modal__btn {
-    width: 150px;
+    width: 200px;
     margin: 0 auto;
 }
 .close__icon__wrapper {
     position: absolute;
     right: 0px;
     top: 0px;
+}
+@media screen and (max-width:768px) {
+    .modal__container {
+        width: 300px;
+    }
+}
+@media screen and (max-width:425px) {
+    .modal__container {
+        width: 280px;
+        padding: 40px 10px;
+    }
 }

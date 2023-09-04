@@ -1,63 +1,86 @@
 import React, { FC, useState } from "react";
 import { Modal, TextField, Button } from "@mui/material";
-import cl from './CreateRoomModal.module.css'
-import CloseIcon from '@mui/icons-material/Close'
-import { IconButton } from '@mui/material'
+import cl from "./CreateRoomModal.module.css";
+import CloseIcon from "@mui/icons-material/Close";
+import { IconButton } from "@mui/material";
 
 interface createRoomModalProps {
-roomStatus: string,
-setRoomStatus: (name: string) => void,
-roomMembers: string,
-setRoomMembers: (name: string) => void,
-roomName: string,
-setRoomName: (name: string) => void,
-roomType: string,
-setRoomType: (name: string) => void,
-createRoom: any,
-modal: boolean,
-closeModal: any;
-
-
+  roomStatus: string;
+  setRoomStatus: (name: string) => void;
+  roomMembers: string;
+  setRoomMembers: (name: string) => void;
+  roomName: string;
+  setRoomName: (name: string) => void;
+  roomType: string;
+  setRoomType: (name: string) => void;
+  createRoom: any;
+  modal: boolean;
+  closeModal: any;
 }
-const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, roomMembers, setRoomMembers, roomName, setRoomName, roomType, setRoomType, createRoom, modal, closeModal}) => {
-
+const CreateRoomModal: FC<createRoomModalProps> = ({
+  roomStatus,
+  setRoomStatus,
+  roomMembers,
+  setRoomMembers,
+  roomName,
+  setRoomName,
+  roomType,
+  setRoomType,
+  createRoom,
+  modal,
+  closeModal,
+}) => {
+  const [error, setError] = useState<boolean>(false);
   const selectDirectMessage = () => {
-    setRoomType('directMessage')
-    setRoomStatus('dm')
-  }
+    setRoomType("directMessage");
+    setRoomStatus("dm");
+  };
+  const checkAndCreateRoom = () => {
+    if (roomMembers.split(",").length > 1) {
+      setError(true);
+    } else {
+      createRoom();
+      setError(false);
+    }
+  };
 
-
-    return (
-        <div>
-            
-            <Modal open={modal} onClose={closeModal}>
-              {roomType === 'room' ? <div className={cl.modal__container}>
-              <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
-                <div className={cl.modal__radio__wrapper}>
-            <input
-              type="radio"
-              name="status"
-              id="public"
-              checked={roomStatus === "public"}
-              value={"public"}
-              onChange={(e) => setRoomStatus(e.target.value)}
-            />
-            <label htmlFor="public">Public</label>
-            <input
-              type="radio"
-              name="status"
-              id="private"
-              checked={roomStatus === "private"}
-              value={"private"}
-              onChange={(e) => setRoomStatus(e.target.value)}
-            />
-            <label htmlFor="private">Private</label>
+  return (
+    <div>
+      <Modal open={modal} onClose={closeModal}>
+        {roomType === "room" ? (
+          <div className={cl.modal__container}>
+            <div className={cl.close__icon__wrapper}>
+              <IconButton onClick={closeModal}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+            <div className={cl.modal__radio__wrapper}>
+              <input
+                type="radio"
+                name="status"
+                id="public"
+                checked={roomStatus === "public"}
+                value={"public"}
+                onChange={(e) => setRoomStatus(e.target.value)}
+              />
+              <label htmlFor="public">Public</label>
+              <input
+                type="radio"
+                name="status"
+                id="private"
+                checked={roomStatus === "private"}
+                value={"private"}
+                onChange={(e) => setRoomStatus(e.target.value)}
+              />
+              <label htmlFor="private">Private</label>
             </div>
             {roomStatus === "private" && (
               <TextField
                 value={roomMembers}
                 onChange={(e) => setRoomMembers(e.target.value)}
                 fullWidth
+                size="small"
+                helperText={"Separate users with comma"}
                 maxRows={2}
                 className={cl.chat__input}
                 placeholder="Invite..."
@@ -76,29 +99,50 @@ const CreateRoomModal: FC<createRoomModalProps> = ({roomStatus, setRoomStatus, r
             <Button variant="outlined" onClick={createRoom}>
               Create room
             </Button>
-          </div> : roomType === 'directMessage' ? <div className={cl.modal__container}>
-          <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
-              <TextField
-                value={roomMembers}
-                onChange={(e) => setRoomMembers(e.target.value)}
-                fullWidth
-                maxRows={2}
-                className={cl.chat__input}
-                placeholder="Invite..."
-                variant="outlined"
-              />
-            <Button variant="outlined" onClick={createRoom}>
+          </div>
+        ) : roomType === "directMessage" ? (
+          <div className={cl.modal__container}>
+            <div className={cl.close__icon__wrapper}>
+              <IconButton onClick={closeModal}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+            <TextField
+              value={roomMembers}
+              onChange={(e) => setRoomMembers(e.target.value)}
+              fullWidth
+              size="small"
+              error={error}
+              helperText={
+                error ? "You can invite only 1 user" : "Invite 1 user"
+              }
+              maxRows={2}
+              className={cl.chat__input}
+              placeholder="Invite..."
+              variant="outlined"
+            />
+            <Button variant="outlined" onClick={checkAndCreateRoom}>
               Start a conversation
             </Button>
-          </div> : <div className={cl.modal__container}>
-          <div className={cl.close__icon__wrapper}><IconButton onClick={closeModal} ><CloseIcon/></IconButton></div>
-            <Button variant="outlined" onClick={() => setRoomType('room')}>Create room</Button>
-            <Button variant="outlined" onClick={selectDirectMessage}>Direct message</Button>
-          </div>}
-            
-            </Modal>
-        </div>
-    )
-}
+          </div>
+        ) : (
+          <div className={cl.modal__container}>
+            <div className={cl.close__icon__wrapper}>
+              <IconButton onClick={closeModal}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+            <Button variant="outlined" onClick={() => setRoomType("room")}>
+              Create room
+            </Button>
+            <Button variant="outlined" onClick={selectDirectMessage}>
+              Direct message
+            </Button>
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+};
 
 export default CreateRoomModal;

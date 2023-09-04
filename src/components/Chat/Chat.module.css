@@ -234,6 +234,9 @@
     .chat__scrollbtn__wrapper {
         bottom: 100px;
     }
+    .modal__container {
+        width: 300px;
+    }
 }
 @media screen and (max-width:450px) {
     .chat__room__name {
@@ -254,6 +257,10 @@
     }
     .chat__scrollbtn__wrapper {
         right: 50px;
+    }
+    .modal__container {
+        width: 280px;
+        padding: 40px 10px;
     }
 }
 @media screen and (max-width:375px) {
