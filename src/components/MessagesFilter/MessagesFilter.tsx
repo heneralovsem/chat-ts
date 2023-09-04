@@ -43,14 +43,14 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
     query(
       collection(firestore, `rooms/${selectedRoom}/messages`),
       where("isPinned", "==", true),
-      orderBy("createdAt")
+      // orderBy("createdAt")
     )
   );
   const [fromUser] = useCollectionData<IMessage>(
     query(
       collection(firestore, `rooms/${selectedRoom}/messages`),
       where("displayName", "==", searchedValue),
-      orderBy("createdAt")
+      // orderBy("createdAt", 'desc')
     )
   );
   const [hasFile] = useCollectionData<IMessage>(
@@ -156,7 +156,9 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
               </IconButton>
             </div>
             <h2 className={cl.chat__filter__type}>Pinned messages</h2>
-            {pinnedMessages?.map((message) => (
+            {pinnedMessages
+            ?.sort((a, b) => b.createdAt - a.createdAt)
+            ?.map((message) => (
               <FilteredMessage
                 scrollToPinned={scrollToFiltered}
                 selectedMessage={selectedMessage}
@@ -179,7 +181,9 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
             <h2 className={cl.chat__filter__type}>
               Messages from {searchedValue}
             </h2>
-            {fromUser?.map((message) => (
+            {fromUser
+            ?.sort((a, b) => b.createdAt - a.createdAt)
+            ?.map((message) => (
               <FilteredMessage
                 scrollToPinned={scrollToFiltered}
                 selectedMessage={selectedMessage}
@@ -253,7 +257,7 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
               disabled={filterType !== "from:user"}
             />
           </div>
-          {filterType === "pinned" && (
+          {/* {filterType === "pinned" && (
             <div className={cl.chat__pinned__messages}>
               <h2 className={cl.chat__filter__type}>Pinned messages</h2>
               {pinnedMessages
@@ -300,7 +304,7 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
                   />
                 ))}
             </div>
-          )}
+          )} */}
         </div>
       </Modal>
     </div>
