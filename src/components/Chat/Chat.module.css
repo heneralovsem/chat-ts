@@ -156,20 +156,10 @@
 .chat__send__wrapper {
     display: flex;
 }
-
-.chat__replied__message__name {
-    
-}
-.chat__replied__message__text {
-    
-}
 .icon__wrapper {
     display: flex;
     justify-content: center;
     margin: 0 auto;
-    
-}
-.icon__test:hover {
     
 }
 .close__icon__wrapper {
@@ -186,7 +176,17 @@
 }
 .chat__room__name {
     font-size: 32px;
-   align-self: center;
+    align-self: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 450px;
+}
+@media screen and (max-width:1440px) {
+    .chat__room__name {
+        font-size: 28px;
+        max-width: 260px;
+    }
 }
 @media screen and (max-width:1024px) {
     .chat__room__name {
@@ -218,9 +218,6 @@
     }
     .chat__room__name {
         max-width: 250px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
     }
     .chat__header {
         padding: 7px 10px;

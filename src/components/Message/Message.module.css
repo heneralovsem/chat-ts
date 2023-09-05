@@ -43,6 +43,29 @@
 .message__icons {
     display: flex;
 }
+.message__hidden__icons {
+    display: none;
+}
+.drawer__icons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+}
+.drawer__public__icons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.drawer__private__icons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.drawer__icon__wrapper {
+    display: flex;
+    align-items: center;
+}
 .messages__replied__message {
     padding-top: 10px;
     padding-left: 7px;
@@ -72,8 +95,14 @@
     .message__date {
         font-size: 14px;
     }
-    .message__icons {
-       
+    .message__public__icons {
+        display: none;
+    }
+    .message__private__icons {
+        display: none;
+    }
+    .message__hidden__icons {
+        display: flex;
     }
     .message__icon__button {
         width: 28px;

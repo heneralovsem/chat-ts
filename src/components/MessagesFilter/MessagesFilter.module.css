@@ -73,6 +73,17 @@
     gap: 10px;
     padding: 10px;
 }
+@media screen and (max-width:1440px) {
+    .chat__search {
+        max-width: 160px;
+    }
+    .chat__select {
+        width: 140px;
+    }
+    .message__filter__wrapper {
+        gap: 15px;
+    }
+}
 @media screen and (max-width:1024px) {
     .message__filter__search__wrapper {
         display: none;

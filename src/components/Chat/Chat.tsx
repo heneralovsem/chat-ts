@@ -109,7 +109,7 @@ const Chat: FC = () => {
     updateDoc(roomRef, {
       users: [...selectedRoomUsers, ...addedUsers.split(",")],
     });
-    const eventMessage = `${user?.displayName} has added ${addedUsers}`;
+    const eventMessage = `${user?.displayName} added ${addedUsers}`;
     sendEventMessage(selectedRoom, eventMessage);
     updateDoc(roomRef, {
       timestamp: serverTimestamp(),
@@ -220,7 +220,7 @@ const Chat: FC = () => {
       });
       setSelectedRoomName(roomName);
       setSelectedRoom(id);
-      const eventMessage = `${user?.displayName} has created a room`;
+      const eventMessage = `${user?.displayName} created a room`;
       sendEventMessage(id, eventMessage);
       closeModal();
     }

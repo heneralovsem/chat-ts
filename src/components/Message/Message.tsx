@@ -1,12 +1,12 @@
 import React, { FC, forwardRef, useContext, useState } from "react";
 import { IMessage } from "../../types/types";
 import cl from "./Message.module.css";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, Icon, IconButton } from "@mui/material";
 import { Context } from "../..";
 import { RoomContext } from "../..";
 import { useAuthState } from "react-firebase-hooks/auth";
 import dayjs from "dayjs";
-import { Modal, TextField, Button } from "@mui/material";
+import { Modal, TextField, Button, Drawer } from "@mui/material";
 import {
   updateDoc,
   collection,
@@ -18,6 +18,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import ReplyIcon from "@mui/icons-material/Reply";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import EditMessageModal from "../EditMessageModal/EditMessageModal";
 import { DocumentReference } from "firebase/firestore";
 
@@ -51,6 +52,7 @@ const Message: FC<MessageProps> = (
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
   const [isHovering, setIsHovering] = useState(false);
   const [modal, setModal] = useState(false);
+  const [drawer, setDrawer] = useState(false);
   const [editedValue, setEditedValue] = useState(messages.text);
   const msgRef = doc(
     firestore,
@@ -65,10 +67,17 @@ const Message: FC<MessageProps> = (
     setIsHovering(false);
   };
   const openModal = () => {
+    setDrawer(false)
     setModal(true);
   };
   const closeModal = () => {
     setModal(false);
+  };
+  const openDrawer = () => {
+    setDrawer(true);
+  };
+  const closeDrawer = () => {
+    setDrawer(false);
   };
   const replyToMessage = () => {
     setIsReplying(true);
@@ -81,6 +90,7 @@ const Message: FC<MessageProps> = (
     setTimeout(() => {
       forceScroll();
     });
+    closeDrawer()
   };
   const editMessage = () => {
     closeModal();
@@ -92,14 +102,16 @@ const Message: FC<MessageProps> = (
     updateDoc(msgRef, {
       isPinned: true,
     });
-    const eventMessage = `${user?.displayName} has pinned a message`;
+    const eventMessage = `${user?.displayName} pinned a message`;
     sendEventMessage(selectedRoom, eventMessage);
     updateDoc(roomRef, {
       timestamp: serverTimestamp(),
     });
+    closeDrawer()
   };
   const deleteMessage = async () => {
     await deleteDoc(msgRef);
+    closeDrawer()
   };
   const getDocId = () => {
     setSelectedMessage(messages.repliedMessage.id);
@@ -184,6 +196,11 @@ const Message: FC<MessageProps> = (
                     <PushPinIcon className={cl.message__icon} />
                   </IconButton>
                 </div>
+                <div className={cl.message__hidden__icons}>
+                  <IconButton className={cl.message__more__icon__button} onClick={openDrawer}>
+                    <MoreHorizIcon className={cl.message__more__icon} />
+                  </IconButton>
+                </div>
                 {isHovering && user?.uid === messages.uid && (
                   <div className={cl.message__private__icons}>
                     <IconButton
@@ -204,6 +221,60 @@ const Message: FC<MessageProps> = (
                 )}
               </div>
             )}
+            <Drawer
+              anchor="bottom"
+              open={drawer}
+              onClose={closeDrawer}
+            >
+              <div className={cl.drawer__icons}>
+                <div className={cl.drawer__public__icons}>
+                  <div className={cl.drawer__icon__wrapper}>
+                  <IconButton
+                    className={cl.drawer__icon__button}
+                    onClick={replyToMessage}
+                    color="default"
+                  >
+                    <ReplyIcon className={cl.drawer__icon} />
+                  </IconButton>
+                  <span className={cl.icon__description}>Reply</span>
+                  </div>
+                  <div className={cl.drawer__icon__wrapper}>
+                  <IconButton
+                    className={cl.drawer__icon__button}
+                    onClick={pinMessage}
+                    color="default"
+                  >
+                    <PushPinIcon className={cl.drawer__icon} />
+                  </IconButton>
+                  <span className={cl.icon__description}>Pin message</span>
+                  </div>
+                </div>
+                {user?.uid === messages.uid && (
+                  <div className={cl.drawer__private__icons}>
+                    <div className={cl.drawer__icon__wrapper}>
+                    <IconButton
+                      className={cl.drawer__icon__button}
+                      onClick={openModal}
+                      color="default"
+                    >
+                      <EditIcon className={cl.drawer__icon} />
+                    </IconButton>
+                    <span className={cl.icon__description}>Edit message</span>
+                    </div>
+                    <div className={cl.drawer__icon__wrapper}>
+                    <IconButton
+                      className={cl.drawer__icon__button}
+                      onClick={deleteMessage}
+                      color="default"
+                    >
+                      <DeleteIcon className={cl.drawer__icon} />
+                    </IconButton>
+                    <span className={cl.icon__description}>Delete message</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Drawer>
             <EditMessageModal
               editedValue={editedValue}
               setEditedValue={setEditedValue}
