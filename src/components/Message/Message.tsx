@@ -58,7 +58,7 @@ const Message: FC<MessageProps> = (
     firestore,
     `rooms/${selectedRoom}/messages/${messages.docId}`
   );
-
+console.log(isHovering)
   const handleMouseOver = () => {
     setIsHovering(true);
   };
@@ -75,6 +75,7 @@ const Message: FC<MessageProps> = (
   };
   const closeModal = () => {
     setModal(false);
+    setIsHovering(false)
   };
   const openDrawer = () => {
     setDrawer(true);
@@ -84,6 +85,7 @@ const Message: FC<MessageProps> = (
   };
   const closeDrawer = () => {
     setDrawer(false);
+    setIsHovering(false)
   };
   const replyToMessage = () => {
     setIsReplying(true);

@@ -86,8 +86,6 @@ const Chat: FC = () => {
     const msgQuery = query(msgCollectionRef, orderBy("createdAt"));
     return msgQuery;
   }, [selectedRoom]);
-  console.log(selectedRoom);
-  console.log(typeof roomRef);
   const lastElement = useRef<HTMLDivElement | any>(null);
   const observer = useRef<IntersectionObserver>();
   const [file, setFile] = useState<File | null | undefined>(null);
