@@ -69,11 +69,13 @@ const Message: FC<MessageProps> = (
   const openModal = () => {
     setDrawer(false)
     setModal(true);
+    setIsHovering(false)
   };
   const closeModal = () => {
     setModal(false);
   };
   const openDrawer = () => {
+    setIsHovering(false)
     setDrawer(true);
   };
   const closeDrawer = () => {
