@@ -69,7 +69,9 @@ const Message: FC<MessageProps> = (
   const openModal = () => {
     setDrawer(false)
     setModal(true);
-    setIsHovering(false)
+    setTimeout(() => {
+      setIsHovering(false)
+    })
   };
   const closeModal = () => {
     setModal(false);
