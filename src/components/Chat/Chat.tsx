@@ -22,33 +22,23 @@ import { collection, updateDoc } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
 import { query } from "firebase/firestore";
 import { IMessage, IRoom } from "../../types/types";
-import { v4 as uuidv4 } from "uuid";
 import Message from "../Message/Message";
 import RoomItem from "../RoomItem/RoomItem";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import Loader from "../Loader/Loader";
-import SendIcon from "@mui/icons-material/Send";
 import AddIcon from "@mui/icons-material/Add";
-import MoodIcon from "@mui/icons-material/Mood";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 import MessagesFilter from "../MessagesFilter/MessagesFilter";
 import Emojis from "../Emojis/Emojis";
+import NewMessage from "../NewMessage/NewMessage";
 
 const Chat: FC = () => {
   const { auth, firestore, storage } = useContext(Context);
   const [user] = useAuthState(auth);
-  const [value, setValue] = useState<string>("");
   const [roomName, setRoomName] = useState<string>("");
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
   const [selectedRoomName, setSelectedRoomName] = useState<string>("General");
@@ -73,7 +63,6 @@ const Chat: FC = () => {
     id: "",
   });
   const [isReplying, setIsReplying] = useState<boolean>(false);
-  const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const [contentVisibility, setContentVisibility] = useState<boolean>(true);
   const refTimer = useRef<number | null>(null);
   const roomRef = doc(firestore, `rooms`, selectedRoom);
@@ -88,8 +77,6 @@ const Chat: FC = () => {
   }, [selectedRoom]);
   const lastElement = useRef<HTMLDivElement | any>(null);
   const observer = useRef<IntersectionObserver>();
-  const [file, setFile] = useState<File | null | undefined>(null);
-  const [fileLoading, setFileLoading] = useState<number>(0);
   const openModal = () => {
     setModal(true);
   };
@@ -129,57 +116,6 @@ const Chat: FC = () => {
     setIsRunning(false);
   };
 
-  const sendMessage = async () => {
-    if (value.trim() !== "" || file) {
-      const msgDocRef = doc(msgCollectionRef);
-      const id = msgDocRef.id;
-      if (file) {
-        const imageRef = ref(storage, `images/${uuidv4()}-${file.name}`);
-        console.log(imageRef);
-        const onSnapshot = await uploadBytesResumable(imageRef, file);
-        const progress =
-          (onSnapshot.bytesTransferred / onSnapshot.totalBytes) * 100;
-        setFileLoading(progress);
-        const imgURL = await getDownloadURL(onSnapshot.ref);
-
-        setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
-          uid: user?.uid,
-          displayName: user?.displayName,
-          photoURL: user?.photoURL,
-          text: value,
-          createdAt: new Date(),
-          docId: id,
-          isPinned: false,
-          imageURL: imgURL,
-          repliedMessage: repliedMessage,
-        });
-      } else {
-        setDoc(doc(firestore, `rooms/${selectedRoom}/messages`, `${id}`), {
-          uid: user?.uid,
-          displayName: user?.displayName,
-          photoURL: user?.photoURL,
-          text: value,
-          createdAt: new Date(),
-          docId: id,
-          isPinned: false,
-          imageURL: null,
-          repliedMessage: repliedMessage,
-        });
-      }
-      setValue("");
-      setFile(null);
-      setFileLoading(0);
-      closeReply();
-      updateDoc(roomRef, {
-        timestamp: serverTimestamp(),
-      });
-    }
-  };
-  const sendOnEnter = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
-  };
   const sendEventMessage = async (id: string, eventMessage: string) => {
     const eventMessageCollectionRef = collection(
       firestore,
@@ -250,13 +186,6 @@ const Chat: FC = () => {
   const scrollToFiltered = () => {
     refTest.current.scrollIntoView({ block: "center" });
     setSelectedMessage("");
-  };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files?.[0]);
-    e.target.value = "";
-    setTimeout(() => {
-      forceScroll();
-    });
   };
   const goBack = () => {
     setContentVisibility(false);
@@ -424,94 +353,7 @@ const Chat: FC = () => {
             <div ref={lastElement}></div>
           </div>
         </div>
-        <div className={cl.chat__new__message}>
-          {isReplying && (
-            <div className={cl.chat__replied__message}>
-              <span>Replying to</span>
-              <Avatar
-                sx={{ width: 24, height: 24 }}
-                className={cl.chat__replied__message__avatar}
-                src={repliedMessage.avatar}
-              />
-              <span className={cl.chat__replied__message__name}>
-                {repliedMessage.displayName}
-              </span>
-              <span className={cl.chat__replied__message__text}>
-                {repliedMessage.text}
-              </span>
-              <button onClick={closeReply}>close</button>
-            </div>
-          )}
-          {file && (
-            <div className={cl.chat__fileupload}>
-              <p className={cl.file__name}>{file.name}</p>
-              <span className={cl.file__loading__progress}>
-                Loading... {fileLoading}%
-              </span>
-            </div>
-          )}
-          <div className={cl.chat__send__wrapper}>
-            <TextField
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onKeyUp={sendOnEnter}
-              fullWidth
-              maxRows={2}
-              size="small"
-              className={cl.chat__input}
-              placeholder="Your message..."
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconButton color="primary" component="label">
-                      <input
-                        hidden
-                        accept="image/*"
-                        id="icon__button"
-                        type="file"
-                        onChange={
-                          handleFileChange
-                          // setFile(event.target.files?.[0]);
-                        }
-                        // onClick={(e:React.MouseEvent<HTMLInputElement>) => {
-                        //   e.currentTarget.value = ''
-                        // }}
-                      />
-                      <label htmlFor="icon__button"></label>
-
-                      <AddIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <>
-                    <InputAdornment position="start">
-                      <IconButton
-                        color="primary"
-                        onClick={(e) => setShowEmojis(!showEmojis)}
-                      >
-                        <MoodIcon />
-                      </IconButton>
-                      {showEmojis && (
-                        <Emojis
-                          value={value}
-                          setValue={setValue}
-                          setShowEmojis={setShowEmojis}
-                        />
-                      )}
-                    </InputAdornment>
-                    <InputAdornment position="end">
-                      <IconButton color="primary" onClick={sendMessage}>
-                        <SendIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  </>
-                ),
-              }}
-            />
-          </div>
-        </div>
+        <NewMessage msgCollectionRef={msgCollectionRef} forceScroll={forceScroll} roomRef={roomRef} repliedMessage={repliedMessage} isReplying={isReplying} closeReply={closeReply} />
       </div>
     </div>
   );

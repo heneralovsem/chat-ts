@@ -58,7 +58,6 @@ const Message: FC<MessageProps> = (
     firestore,
     `rooms/${selectedRoom}/messages/${messages.docId}`
   );
-console.log(isHovering)
   const handleMouseOver = () => {
     setIsHovering(true);
   };
@@ -169,7 +168,7 @@ console.log(isHovering)
                 <span className={cl.chat__replied__message__name}>
                   {messages.repliedMessage.displayName}
                 </span>
-                <span className={cl.chat__replied__message__text}>
+                <span className={cl.messages__replied__message__text}>
                   {messages.repliedMessage.text}
                 </span>
               </div>

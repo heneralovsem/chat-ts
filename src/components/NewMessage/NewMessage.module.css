@@ -1,0 +1,81 @@
+.chat__new__message {
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat__replied__message {
+    padding-left: 5px;
+    font-size: 12px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+.chat__replied__message__text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 500px;
+}
+.chat__replied__message__name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+.replied__message__iconbtn {
+    width: 28px;
+}
+.replied__message__icon {
+    width: 20px !important;
+}
+
+@media screen and (max-width:1440px) {
+    .chat__replied__message__text {
+        max-width: 300px;
+    }
+    .chat__replied__message__name {
+        max-width: 150px;
+    }
+}
+@media screen and (max-width:1024px) {
+    .chat__replied__message__text {
+        max-width: 175px;
+    }
+    .chat__replied__message__name {
+        max-width: 125px;
+    }
+}
+@media screen and (max-width:520px) {
+    .chat__replied__message__text {
+        max-width: 140px;
+    }
+    .chat__replied__message__name {
+        max-width: 110px;
+    }
+}
+@media screen and (max-width:425px) {
+    .chat__replied__message__text {
+        max-width: 100px;
+    }
+    .chat__replied__message__name {
+        max-width: 90px;
+    }
+    .chat__replied__message {
+        font-size: 10px;
+    }
+    .replied__message__iconbtn {
+        width: 24px;
+    }
+    .replied__message__icon {
+        width: 16px !important;
+    }
+}
+@media screen and (max-width:375px) {
+    .chat__replied__message__text {
+        max-width: 90px;
+    }
+    .chat__replied__message__name {
+        max-width: 80px;
+    }
+}

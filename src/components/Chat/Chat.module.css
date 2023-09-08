@@ -99,11 +99,6 @@
   flex: 1 1 auto;
 }
 
-.chat__new__message {
-    padding-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-}
 .chat__btn {
     width: 200px;
     
@@ -146,13 +141,7 @@
     width: 150px;
 }
 
-.chat__replied__message {
-    padding-left: 5px;
-    font-size: 12px;
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
+
 .chat__send__wrapper {
     display: flex;
 }

@@ -74,8 +74,12 @@
     font-size: 12px;
     align-items: center;
 }
-.chat__replied__message__text {
+.messages__replied__message__text {
     line-height: 22px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 /* .chat__replied__message__avatar__row {
     display: flex;
@@ -117,6 +121,9 @@
         padding: 4px 10px 4px 10px;
         
     }
+    .messages__replied__message__text {
+        line-height: 20px;
+    }
     
 }
 @media screen and (max-width:450px) {
@@ -152,6 +159,9 @@
     }
     .messages__replied__message {
         font-size: 10px;
+    }
+    .messages__replied__message__text {
+        max-width: 100px;
     }
 }
 @media screen and (max-width:375px) {
