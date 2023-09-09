@@ -15,8 +15,6 @@ import {
   Button,
   Modal,
   IconButton,
-  InputAdornment,
-  Avatar,
 } from "@mui/material";
 import { collection, updateDoc } from "firebase/firestore";
 import { orderBy } from "firebase/firestore";
@@ -33,22 +31,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 import MessagesFilter from "../MessagesFilter/MessagesFilter";
-import Emojis from "../Emojis/Emojis";
 import NewMessage from "../NewMessage/NewMessage";
 
 const Chat: FC = () => {
   const { auth, firestore, storage } = useContext(Context);
   const [user] = useAuthState(auth);
-  const [roomName, setRoomName] = useState<string>("");
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
   const [selectedRoomName, setSelectedRoomName] = useState<string>("General");
   const [selectedRoomUsers, setSelectedRoomUsers] = useState<Array<any>>([]);
   const [selectedRoomStatus, setSelectedRoomStatus] = useState<
     string | undefined
   >("");
-  const [roomStatus, setRoomStatus] = useState<string>("public");
-  const [roomMembers, setRoomMembers] = useState<string>("");
-  const [roomType, setRoomType] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
   const [addUsersModal, setAddUsersModal] = useState<boolean>(false);
   const [addedUsers, setAddedUsers] = useState<string>("");
@@ -79,13 +72,6 @@ const Chat: FC = () => {
   const observer = useRef<IntersectionObserver>();
   const openModal = () => {
     setModal(true);
-  };
-  const closeModal = () => {
-    setModal(false);
-    setRoomMembers("");
-    setRoomStatus("public");
-    setRoomName("");
-    setRoomType("");
   };
   const closeAddUsersModal = () => {
     setAddUsersModal(false);
@@ -138,27 +124,7 @@ const Chat: FC = () => {
       }
     );
   };
-  const createRoom = async (e: React.MouseEvent) => {
-    if (
-      (roomStatus !== "dm" && roomName.trim() !== "") ||
-      (roomStatus === "dm" && roomMembers.trim() !== "")
-    ) {
-      const roomDocRef = doc(roomCollectionRef);
-      const id = roomDocRef.id;
-      await setDoc(doc(firestore, "rooms", `${id}`), {
-        name: roomName,
-        status: roomStatus,
-        docId: id,
-        users: [user?.displayName, ...roomMembers.split(",")],
-        timestamp: serverTimestamp(),
-      });
-      setSelectedRoomName(roomName);
-      setSelectedRoom(id);
-      const eventMessage = `${user?.displayName} created a room`;
-      sendEventMessage(id, eventMessage);
-      closeModal();
-    }
-  };
+
   const [messages] = useCollectionData<IMessage>(query(msgQuery));
   const refTest = useRef<any | null>(null);
   const closeReply = () => {
@@ -255,17 +221,12 @@ const Chat: FC = () => {
         )}
 
         <CreateRoomModal
-          roomStatus={roomStatus}
-          setRoomStatus={setRoomStatus}
-          roomMembers={roomMembers}
-          setRoomMembers={setRoomMembers}
-          roomName={roomName}
-          setRoomName={setRoomName}
-          roomType={roomType}
-          setRoomType={setRoomType}
-          createRoom={createRoom}
           modal={modal}
-          closeModal={closeModal}
+          setModal={setModal}
+          sendEventMessage={sendEventMessage}
+          setSelectedRoom={setSelectedRoom}
+          setSelectedRoomName={setSelectedRoomName}
+          roomCollectionRef={roomCollectionRef}
         />
       </div>
       <div
@@ -353,7 +314,14 @@ const Chat: FC = () => {
             <div ref={lastElement}></div>
           </div>
         </div>
-        <NewMessage msgCollectionRef={msgCollectionRef} forceScroll={forceScroll} roomRef={roomRef} repliedMessage={repliedMessage} isReplying={isReplying} closeReply={closeReply} />
+        <NewMessage
+          msgCollectionRef={msgCollectionRef}
+          forceScroll={forceScroll}
+          roomRef={roomRef}
+          repliedMessage={repliedMessage}
+          isReplying={isReplying}
+          closeReply={closeReply}
+        />
       </div>
     </div>
   );

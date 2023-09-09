@@ -54,9 +54,12 @@
     border: 1px solid lightgray;
     background-color: white;
 }
-.close__icon__wrapper {
+.close__icon__wrapper__position {
     position: absolute;
-    right: 0px;
+    right: 40px;
+}   
+.close__icon__wrapper {
+    position: fixed;
 }
 .chat__search {
     max-width: 180px;

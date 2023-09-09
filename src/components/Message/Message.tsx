@@ -19,6 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import ReplyIcon from "@mui/icons-material/Reply";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ImageIcon from "@mui/icons-material/Image";
 import EditMessageModal from "../EditMessageModal/EditMessageModal";
 import { DocumentReference } from "firebase/firestore";
 
@@ -171,6 +172,7 @@ const Message: FC<MessageProps> = (
                 <span className={cl.messages__replied__message__text}>
                   {messages.repliedMessage.text}
                 </span>
+                {!messages.repliedMessage.text && <ImageIcon className={cl.replied__message__icon} />}
               </div>
             )}
 

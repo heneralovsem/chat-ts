@@ -150,10 +150,12 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
       {filterType === "pinned" && (
         <Modal open={filterType === "pinned"} onClose={closeModal}>
           <div className={cl.chat__filtered__modal}>
+            <div className={cl.close__icon__wrapper__position}>
             <div className={cl.close__icon__wrapper}>
               <IconButton onClick={closeModal}>
                 <CloseIcon />
               </IconButton>
+            </div>
             </div>
             <h2 className={cl.chat__filter__type}>Pinned messages</h2>
             {pinnedMessages
@@ -173,10 +175,12 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
       {isSearching && filterType === "from:user" && (
         <Modal open={filterType === "from:user"} onClose={closeModal}>
           <div className={cl.chat__filtered__modal}>
+          <div className={cl.close__icon__wrapper__position}>
             <div className={cl.close__icon__wrapper}>
               <IconButton onClick={closeModal}>
                 <CloseIcon />
               </IconButton>
+            </div>
             </div>
             <h2 className={cl.chat__filter__type}>
               Messages from {searchedValue}
@@ -198,10 +202,12 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
       {filterType === "has:file" && (
         <Modal open={filterType === "has:file"} onClose={closeModal}>
           <div className={cl.chat__filtered__modal}>
+          <div className={cl.close__icon__wrapper__position}>
             <div className={cl.close__icon__wrapper}>
               <IconButton onClick={closeModal}>
                 <CloseIcon />
               </IconButton>
+            </div>
             </div>
             <h2 className={cl.chat__filter__type}>Messages with file</h2>
             {hasFile

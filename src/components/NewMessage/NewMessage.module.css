@@ -25,11 +25,34 @@
 }
 .replied__message__iconbtn {
     width: 28px;
+    height: 28px;
 }
 .replied__message__icon {
     width: 20px !important;
+    height: 20px !important;
 }
-
+.chat__fileupload {
+    padding-left: 5px;
+}
+.fileupload__flex {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.file__name {
+    font-size: 14px;
+}
+.file__loading__progress {
+    font-size: 14px;
+}
+.file__iconbtn {
+    width: 28px;
+    height: 28px;
+}
+.file__icon {
+    width: 20px !important;
+    height: 20px !important;
+}
 @media screen and (max-width:1440px) {
     .chat__replied__message__text {
         max-width: 300px;

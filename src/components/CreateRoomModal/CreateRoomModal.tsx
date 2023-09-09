@@ -1,45 +1,77 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useContext } from "react";
 import { Modal, TextField, Button } from "@mui/material";
 import cl from "./CreateRoomModal.module.css";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Context } from "../..";
+import { setDoc, doc, serverTimestamp, CollectionReference } from "firebase/firestore";
 
 interface createRoomModalProps {
-  roomStatus: string;
-  setRoomStatus: (name: string) => void;
-  roomMembers: string;
-  setRoomMembers: (name: string) => void;
-  roomName: string;
-  setRoomName: (name: string) => void;
-  roomType: string;
-  setRoomType: (name: string) => void;
-  createRoom: any;
+  roomCollectionRef: CollectionReference
+  setModal: (name: boolean) => void
   modal: boolean;
-  closeModal: any;
+  setSelectedRoom: (name: string) => void;
+  setSelectedRoomName: (name: string) => void;
+  sendEventMessage: (id: string, eventMessage: string) => void;
 }
 const CreateRoomModal: FC<createRoomModalProps> = ({
-  roomStatus,
-  setRoomStatus,
-  roomMembers,
-  setRoomMembers,
-  roomName,
-  setRoomName,
-  roomType,
-  setRoomType,
-  createRoom,
+  roomCollectionRef,
+  setSelectedRoomName,
+  setSelectedRoom,
+  sendEventMessage,
   modal,
-  closeModal,
+  setModal,
 }) => {
+  const { auth, firestore } = useContext(Context);
+  const [user] = useAuthState(auth);
   const [error, setError] = useState<boolean>(false);
+  const [roomName, setRoomName] = useState<string>("");
+  const [roomStatus, setRoomStatus] = useState<string>("public");
+  const [roomMembers, setRoomMembers] = useState<string>("");
+  const [roomType, setRoomType] = useState<string>("");
   const selectDirectMessage = () => {
     setRoomType("directMessage");
     setRoomStatus("dm");
+  };
+  const createRoom = async () => {
+    if (
+      (roomStatus !== "dm" && roomName.trim() !== "") ||
+      (roomStatus === "dm" && roomMembers.trim() !== "")
+    ) {
+      const roomDocRef = doc(roomCollectionRef);
+      const id = roomDocRef.id;
+      await setDoc(doc(firestore, "rooms", `${id}`), {
+        name: roomName,
+        status: roomStatus,
+        docId: id,
+        users: [user?.displayName, ...roomMembers.split(",")],
+        timestamp: serverTimestamp(),
+      });
+      if (roomName) {
+        setSelectedRoomName(roomName);
+      }
+      else {
+      setSelectedRoomName(roomMembers);
+    }
+      setSelectedRoom(id);
+      const eventMessage = `${user?.displayName} created a room`;
+      sendEventMessage(id, eventMessage);
+      closeModal();
+    }
+  };
+  const closeModal = () => {
+    setModal(false);
+    setRoomMembers("");
+    setRoomStatus("public");
+    setRoomName("");
+    setRoomType("");
   };
   const checkAndCreateRoom = () => {
     if (roomMembers.split(",").length > 1) {
       setError(true);
     } else {
-      createRoom();
+      createRoom()
       setError(false);
     }
   };

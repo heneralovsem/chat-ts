@@ -130,10 +130,18 @@ const NewMessage: FC<NewMessageProps> = ({
       )}
       {file && (
         <div className={cl.chat__fileupload}>
-          <p className={cl.file__name}>{file.name}</p>
-          <span className={cl.file__loading__progress}>
+          <div className={cl.fileupload__flex}>
+            <p className={cl.file__name}>{file.name}</p>
+            <IconButton
+              className={cl.file__iconbtn}
+              onClick={() => setFile(null)}
+            >
+              <CloseIcon className={cl.file__icon} />
+            </IconButton>
+          </div>
+          <p className={cl.file__loading__progress}>
             Loading... {fileLoading}%
-          </span>
+          </p>
         </div>
       )}
       <div className={cl.chat__send__wrapper}>

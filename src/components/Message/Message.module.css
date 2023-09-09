@@ -81,6 +81,9 @@
     text-overflow: ellipsis;
     max-width: 200px;
 }
+.replied__message__icon {
+    color: #a9a9a9;
+}
 /* .chat__replied__message__avatar__row {
     display: flex;
     align-items: center;
