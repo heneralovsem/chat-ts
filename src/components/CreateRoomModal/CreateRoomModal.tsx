@@ -41,11 +41,14 @@ const CreateRoomModal: FC<createRoomModalProps> = ({
     ) {
       const roomDocRef = doc(roomCollectionRef);
       const id = roomDocRef.id;
+      const trimmedRoomMembers = roomMembers.split(',').map(element => {
+        return element.trim()
+      })
       await setDoc(doc(firestore, "rooms", `${id}`), {
         name: roomName,
         status: roomStatus,
         docId: id,
-        users: [user?.displayName, ...roomMembers.split(",")],
+        users: [user?.displayName, ...trimmedRoomMembers],
         timestamp: serverTimestamp(),
       });
       if (roomName) {

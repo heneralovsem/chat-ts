@@ -23,7 +23,7 @@ import CloseIcon from "@mui/icons-material/Close";
 interface MessagesFilterProps {
   selectedMessage: string | undefined;
   setSelectedMessage: (name: string) => void;
-  scrollToFiltered: any;
+  scrollToFiltered: () => void;
 }
 
 const MessagesFilter: FC<MessagesFilterProps> = ({
@@ -162,7 +162,7 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
             ?.sort((a, b) => b.createdAt - a.createdAt)
             ?.map((message) => (
               <FilteredMessage
-                scrollToPinned={scrollToFiltered}
+                scrollToFiltered={scrollToFiltered}
                 selectedMessage={selectedMessage}
                 setSelectedMessage={setSelectedMessage}
                 message={message}
@@ -189,7 +189,7 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
             ?.sort((a, b) => b.createdAt - a.createdAt)
             ?.map((message) => (
               <FilteredMessage
-                scrollToPinned={scrollToFiltered}
+                scrollToFiltered={scrollToFiltered}
                 selectedMessage={selectedMessage}
                 setSelectedMessage={setSelectedMessage}
                 message={message}
@@ -214,7 +214,7 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
               ?.sort((a, b) => b.createdAt - a.createdAt)
               ?.map((message) => (
                 <FilteredMessage
-                  scrollToPinned={scrollToFiltered}
+                  scrollToFiltered={scrollToFiltered}
                   selectedMessage={selectedMessage}
                   setSelectedMessage={setSelectedMessage}
                   message={message}
@@ -263,54 +263,6 @@ const MessagesFilter: FC<MessagesFilterProps> = ({
               disabled={filterType !== "from:user"}
             />
           </div>
-          {/* {filterType === "pinned" && (
-            <div className={cl.chat__pinned__messages}>
-              <h2 className={cl.chat__filter__type}>Pinned messages</h2>
-              {pinnedMessages
-                ?.sort((a, b) => b.createdAt - a.createdAt)
-                ?.map((message) => (
-                  <FilteredMessage
-                    scrollToPinned={scrollToFiltered}
-                    selectedMessage={selectedMessage}
-                    setSelectedMessage={setSelectedMessage}
-                    message={message}
-                    key={message.docId}
-                  />
-                ))}
-            </div>
-          )}
-          {isSearching && filterType === "from:user" && (
-            <div className={cl.chat__pinned__messages}>
-              <h2 className={cl.chat__filter__type}>
-                Messages from {searchedValue}
-              </h2>
-              {fromUser?.map((message) => (
-                <FilteredMessage
-                  scrollToPinned={scrollToFiltered}
-                  selectedMessage={selectedMessage}
-                  setSelectedMessage={setSelectedMessage}
-                  message={message}
-                  key={message.docId}
-                />
-              ))}
-            </div>
-          )}
-          {filterType === "has:file" && (
-            <div className={cl.chat__pinned__messages}>
-              <h2 className={cl.chat__filter__type}>Messages with file</h2>
-              {hasFile
-                ?.sort((a, b) => b.createdAt - a.createdAt)
-                ?.map((message) => (
-                  <FilteredMessage
-                    scrollToPinned={scrollToFiltered}
-                    selectedMessage={selectedMessage}
-                    setSelectedMessage={setSelectedMessage}
-                    message={message}
-                    key={message.docId}
-                  />
-                ))}
-            </div>
-          )} */}
         </div>
       </Modal>
     </div>

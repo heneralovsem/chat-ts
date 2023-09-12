@@ -1,5 +1,5 @@
 import React, { FC, forwardRef, useContext, useState } from "react";
-import { IMessage } from "../../types/types";
+import { IMessage, IRepliedMessage } from "../../types/types";
 import cl from "./Message.module.css";
 import { Avatar, Icon, IconButton } from "@mui/material";
 import { Context } from "../..";
@@ -25,17 +25,17 @@ import { DocumentReference } from "firebase/firestore";
 
 interface MessageProps {
   messages: IMessage;
-  ref: any;
-  setRepliedMessage: any;
+  ref: HTMLDivElement | null;
+  setRepliedMessage: (name: IRepliedMessage) => void;
   setIsReplying: (name: boolean) => void;
   forceScroll: () => void;
-  scrollToFiltered: any;
+  scrollToFiltered: () => void;
   setSelectedMessage: (name: string) => void;
   roomRef: DocumentReference;
   sendEventMessage: (id: string, eventMessage: string) => void;
 }
 
-const Message: FC<MessageProps> = (
+const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = (
   {
     messages,
     setRepliedMessage,
@@ -122,7 +122,7 @@ const Message: FC<MessageProps> = (
     closeDrawer()
   };
   const getDocId = () => {
-    setSelectedMessage(messages.repliedMessage.id);
+    setSelectedMessage(messages.repliedMessage?.id!);
     setTimeout(() => {
       scrollToFiltered();
     });
@@ -304,5 +304,5 @@ const Message: FC<MessageProps> = (
     </div>
   );
 };
-//@ts-ignore
+
 export default forwardRef(Message);

@@ -7,7 +7,7 @@ export interface IMessage {
     docId?:string
     isPinned?:boolean
     imageURL?:string | null
-    repliedMessage?:any
+    repliedMessage?:IRepliedMessage
     eventMessage?:boolean
 }
 
@@ -22,4 +22,10 @@ export interface IUser {
     name?: string;
     uid?: string;
     createdAt:any;
+}
+export interface IRepliedMessage {
+    avatar?: string;
+    displayName?:string;
+    text?:string;
+    id?:string;
 }

@@ -7,9 +7,9 @@ import { IconButton } from "@mui/material";
 interface EditMessageModalProps {
   editedValue: string | undefined;
   setEditedValue: (name: string) => void;
-  editMessage: any;
+  editMessage: () => void;
   modal: boolean;
-  closeModal: any;
+  closeModal: () => void;
 }
 
 const EditMessageModal: FC<EditMessageModalProps> = ({

@@ -19,11 +19,12 @@ import MoodIcon from "@mui/icons-material/Mood";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import Emojis from "../Emojis/Emojis";
+import { IRepliedMessage } from "../../types/types";
 
 interface NewMessageProps {
   msgCollectionRef: CollectionReference;
-  forceScroll: any;
-  repliedMessage: any;
+  forceScroll: () => void;
+  repliedMessage: IRepliedMessage;
   roomRef: DocumentReference;
   isReplying: boolean;
   closeReply: () => void;

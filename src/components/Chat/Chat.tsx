@@ -21,7 +21,7 @@ import { orderBy } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { addDoc, doc, FieldPath, setDoc } from "firebase/firestore";
 import { query } from "firebase/firestore";
-import { IMessage, IRoom } from "../../types/types";
+import { IMessage, IRepliedMessage, IRoom } from "../../types/types";
 import Message from "../Message/Message";
 import RoomItem from "../RoomItem/RoomItem";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
@@ -49,7 +49,7 @@ const Chat: FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [selectedMessage, setSelectedMessage] = useState<string>("");
-  const [repliedMessage, setRepliedMessage] = useState({
+  const [repliedMessage, setRepliedMessage] = useState<IRepliedMessage>({
     avatar: "",
     displayName: "",
     text: "",
@@ -58,6 +58,7 @@ const Chat: FC = () => {
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [contentVisibility, setContentVisibility] = useState<boolean>(true);
   const refTimer = useRef<number | null>(null);
+  const selectedMessageRef = useRef<HTMLDivElement | null>(null);
   const roomRef = doc(firestore, `rooms`, selectedRoom);
   const roomCollectionRef = collection(firestore, "rooms");
   const msgCollectionRef = collection(
@@ -68,7 +69,7 @@ const Chat: FC = () => {
     const msgQuery = query(msgCollectionRef, orderBy("createdAt"));
     return msgQuery;
   }, [selectedRoom]);
-  const lastElement = useRef<HTMLDivElement | any>(null);
+  const lastElement = useRef<HTMLDivElement | null>(null);
   const observer = useRef<IntersectionObserver>();
   const openModal = () => {
     setModal(true);
@@ -77,8 +78,11 @@ const Chat: FC = () => {
     setAddUsersModal(false);
   };
   const addUsers = () => {
+    const trimmedAddedUsers = addedUsers.split(',').map(element => {
+      return element.trim()
+    })
     updateDoc(roomRef, {
-      users: [...selectedRoomUsers, ...addedUsers.split(",")],
+      users: [...selectedRoomUsers, ...trimmedAddedUsers],
     });
     const eventMessage = `${user?.displayName} added ${addedUsers}`;
     sendEventMessage(selectedRoom, eventMessage);
@@ -118,7 +122,7 @@ const Chat: FC = () => {
         displayName: user?.displayName,
         photoURL: user?.photoURL,
         text: eventMessage,
-        createdAt: serverTimestamp(),
+        createdAt: new Date (),
         docId: eventMessageId,
         eventMessage: true,
       }
@@ -126,7 +130,6 @@ const Chat: FC = () => {
   };
 
   const [messages] = useCollectionData<IMessage>(query(msgQuery));
-  const refTest = useRef<any | null>(null);
   const closeReply = () => {
     setIsReplying(false);
     setRepliedMessage({
@@ -150,7 +153,7 @@ const Chat: FC = () => {
     lastElement.current?.scrollIntoView({ behavior: "smooth" });
   };
   const scrollToFiltered = () => {
-    refTest.current.scrollIntoView({ block: "center" });
+    selectedMessageRef.current?.scrollIntoView({ block: "center" });
     setSelectedMessage("");
   };
   const goBack = () => {
@@ -174,7 +177,9 @@ const Chat: FC = () => {
       }
     };
     observer.current = new IntersectionObserver(callback);
-    observer.current.observe(lastElement.current);
+    if (lastElement.current) {
+      observer.current.observe(lastElement.current);
+    }
   }, [isVisible, messages]);
   return (
     <div className={cl.chat__wrapper}>
@@ -285,7 +290,7 @@ const Chat: FC = () => {
           <div className={cl.chat__msgtest}>
             {messages?.map((message) => {
               const refProps =
-                selectedMessage === message.docId ? { ref: refTest } : {};
+                selectedMessage === message.docId ? { ref: selectedMessageRef } : {};
               return (
                 <Message
                   {...refProps}

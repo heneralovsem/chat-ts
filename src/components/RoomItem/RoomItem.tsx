@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 interface RoomItemProps {
   room: IRoom;
   isScrolling: boolean;
-  setIsScrolling: any;
+  setIsScrolling: (name: boolean) => void;
   setSelectedRoomName: (name: string) => void;
   setSelectedRoomStatus: (name: string | undefined) => void;
   setSelectedRoomUsers: (name: Array<string>) => void;

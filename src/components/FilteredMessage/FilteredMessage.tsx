@@ -10,13 +10,13 @@ interface FilteredMessageProps {
   message: IMessage;
   selectedMessage: string | undefined;
   setSelectedMessage: (name: string) => void;
-  scrollToPinned: any;
+  scrollToFiltered: () => void;
 }
 const FilteredMessage: FC<FilteredMessageProps> = ({
   message,
   selectedMessage,
   setSelectedMessage,
-  scrollToPinned,
+  scrollToFiltered,
 }) => {
   const { auth } = useContext(Context);
   const [user] = useAuthState(auth);
@@ -35,7 +35,7 @@ const FilteredMessage: FC<FilteredMessageProps> = ({
     //@ts-ignore
     setSelectedMessage(message.docId);
     setTimeout(() => {
-      scrollToPinned();
+      scrollToFiltered();
     });
   };
   const messageDate = message.createdAt && message.createdAt.toDate();

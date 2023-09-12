@@ -4,6 +4,7 @@
 .message__wrapper {
     padding: 5px 15px 5px 15px;
     word-wrap: break-word;
+    cursor: pointer;
     
 }
 .message__wrapper:hover {

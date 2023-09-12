@@ -73,6 +73,7 @@
     gap: 5px;
     font-size: 12px;
     align-items: center;
+    cursor: pointer;
 }
 .messages__replied__message__text {
     line-height: 22px;
