@@ -151,6 +151,7 @@ const NewMessage: FC<NewMessageProps> = ({
           onChange={(e) => setValue(e.target.value)}
           onKeyUp={sendOnEnter}
           fullWidth
+          autoComplete="off"
           maxRows={2}
           size="small"
           className={cl.chat__input}

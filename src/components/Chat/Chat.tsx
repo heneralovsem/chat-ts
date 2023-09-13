@@ -32,12 +32,14 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreateRoomModal from "../CreateRoomModal/CreateRoomModal";
 import MessagesFilter from "../MessagesFilter/MessagesFilter";
 import NewMessage from "../NewMessage/NewMessage";
+import MessagesLoader from "../MessagesLoader/MessagesLoader";
 
 const Chat: FC = () => {
   const { auth, firestore, storage } = useContext(Context);
   const [user] = useAuthState(auth);
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
-  const [selectedRoomName, setSelectedRoomName] = useState<string>("General");
+  const lastRoomName = localStorage.getItem('roomName')
+  const [selectedRoomName, setSelectedRoomName] = useState<string>(lastRoomName || "General");
   const [selectedRoomUsers, setSelectedRoomUsers] = useState<Array<any>>([]);
   const [selectedRoomStatus, setSelectedRoomStatus] = useState<
     string | undefined
@@ -129,7 +131,7 @@ const Chat: FC = () => {
     );
   };
 
-  const [messages] = useCollectionData<IMessage>(query(msgQuery));
+  const [messages, messagesLoading] = useCollectionData<IMessage>(query(msgQuery));
   const closeReply = () => {
     setIsReplying(false);
     setRepliedMessage({
@@ -286,9 +288,10 @@ const Chat: FC = () => {
             />
           </div>
         </div>
-        <div className={cl.chat__messages}>
-          <div className={cl.chat__msgtest}>
-            {messages?.map((message) => {
+        <div className={cl.chat__messages__wrapper}>
+          <div className={cl.chat__messages}>
+            {messagesLoading && <MessagesLoader/>}
+            {!messagesLoading && messages?.map((message) => {
               const refProps =
                 selectedMessage === message.docId ? { ref: selectedMessageRef } : {};
               return (

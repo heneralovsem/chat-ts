@@ -12,8 +12,8 @@ import { RoomContext } from '.';
 function App() {
   const {auth} = useContext(Context)
   const [user, loading, error] = useAuthState(auth)
-  
-  const [selectedRoom, setSelectedRoom] =  useState<string>('General')
+  const lastRoom = localStorage.getItem('roomId')
+  const [selectedRoom, setSelectedRoom] =  useState<string>(lastRoom || 'General')
   if (loading) {
     return <MainLoader/>
   }

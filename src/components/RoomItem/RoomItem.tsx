@@ -44,16 +44,20 @@ const RoomItem: FC<RoomItemProps> = ({
     setSelectedRoomStatus(room.status);
     setContentVisibility(true);
     setIsScrolling(false);
+    localStorage.setItem('roomId', `${room.docId}`)
     if (room.users) {
       setSelectedRoomUsers(room.users);
     }
 
     if (room.name) {
       setSelectedRoomName(room.name);
+      localStorage.setItem('roomName', `${room.name}`)
     } else if (room.users && room.users[0] === user?.displayName) {
       setSelectedRoomName(room.users[1]);
+      localStorage.setItem('roomName', `${room.users[1]}`)
     } else if (room.users) {
       setSelectedRoomName(room.users[0]);
+      localStorage.setItem('roomName', `${room.users[0]}`)
     }
   };
   const lastMessageDate =

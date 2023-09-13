@@ -22,6 +22,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ImageIcon from "@mui/icons-material/Image";
 import EditMessageModal from "../EditMessageModal/EditMessageModal";
 import { DocumentReference } from "firebase/firestore";
+import ImageModal from "../ImageModal/ImageModal";
 
 interface MessageProps {
   messages: IMessage;
@@ -53,6 +54,7 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
   const { selectedRoom, setSelectedRoom } = useContext(RoomContext);
   const [isHovering, setIsHovering] = useState(false);
   const [modal, setModal] = useState(false);
+  const [imageModal, setImageModal] = useState(false)
   const [drawer, setDrawer] = useState(false);
   const [editedValue, setEditedValue] = useState(messages.text);
   const msgRef = doc(
@@ -296,9 +298,10 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
           {messages.imageURL && (
             <div>
               {" "}
-              <img className={cl.message__img} src={messages.imageURL} alt="" />
+              <img onClick={() => setImageModal(true)} className={cl.message__img} src={messages.imageURL} alt="" />
             </div>
           )}
+          <ImageModal imageModal={imageModal} setImageModal={setImageModal} imageURL={messages.imageURL} />
         </div>
       )}
     </div>
