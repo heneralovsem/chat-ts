@@ -169,10 +169,10 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
                   src={messages.repliedMessage.avatar}
                 />
                 <span className={cl.chat__replied__message__name}>
-                  { messages.repliedMessage.displayName}
+                  {messages.repliedMessage.displayName}
                 </span>
                 <span onClick={getDocId} className={cl.messages__replied__message__text}>
-                  { messages.repliedMessage.text}
+                  {messages.repliedMessage.text}
                 </span>
                 {!messages.repliedMessage.text && <ImageIcon onClick={getDocId} className={cl.replied__message__icon} />}
               </div>
@@ -182,11 +182,11 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
             <div className={cl.message__avatar__row}>
               <Avatar className={cl.message__avatar} src={messages.photoURL} />
               <span className={cl.message__displayname}>
-                {messages.displayName}
+                { messages.displayName}
               </span>
               <span className={cl.message__date}>
                 {" "}
-                {dayDifference > 0 ? fullDate : hoursAndMins}
+                {dayDifference > 0 ?  fullDate :  hoursAndMins}
               </span>
             </div>
             {isHovering && (
