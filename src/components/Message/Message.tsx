@@ -182,11 +182,11 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
             <div className={cl.message__avatar__row}>
               <Avatar className={cl.message__avatar} src={messages.photoURL} />
               <span className={cl.message__displayname}>
-                { messages.displayName}
+                {messages.displayName}
               </span>
               <span className={cl.message__date}>
                 {" "}
-                {dayDifference > 0 ?  fullDate :  hoursAndMins}
+                {dayDifference > 0 ? fullDate : hoursAndMins}
               </span>
             </div>
             {isHovering && (
