@@ -32,9 +32,6 @@ const Login: FC = () => {
       });
     }
 
-    console.log(user.uid);
-
-    console.log(user);
   };
 
   return (
