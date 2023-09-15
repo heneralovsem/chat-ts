@@ -73,7 +73,6 @@
     gap: 5px;
     font-size: 12px;
     align-items: center;
-    cursor: pointer;
 }
 .messages__replied__message__text {
     line-height: 22px;
@@ -81,9 +80,11 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 200px;
+    cursor: pointer;
 }
 .replied__message__icon {
     color: #a9a9a9;
+    cursor: pointer;
 }
 /* .chat__replied__message__avatar__row {
     display: flex;

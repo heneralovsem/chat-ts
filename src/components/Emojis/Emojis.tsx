@@ -17,7 +17,7 @@ const Emojis: FC<EmojisProps> = ({ value, setValue, setShowEmojis }) => {
 
   return (
     <div className={cl.emojis__wrapper}>
-      <EmojiPicker width={300} onEmojiClick={onEmojiClick} />
+      <EmojiPicker autoFocusSearch={false} previewConfig={{showPreview: false}} width={300} onEmojiClick={onEmojiClick} />
     </div>
   );
 };

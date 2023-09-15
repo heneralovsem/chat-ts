@@ -38,3 +38,12 @@
         padding: 40px 10px;
     }
 }
+@media (orientation: landscape) and (max-width:768px) {
+    .modal__container {
+        height: 300px;
+        width: 400px;
+    }
+    .modal__img {
+        height: 240px;
+    }
+}

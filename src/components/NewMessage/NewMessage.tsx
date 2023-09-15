@@ -45,12 +45,14 @@ const NewMessage: FC<NewMessageProps> = ({
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const [file, setFile] = useState<File | null | undefined>(null);
   const [fileLoading, setFileLoading] = useState<number>(0);
+  const [isFileLoading, setIsFileLoading] = useState<boolean>(false)
 
   const sendMessage = async () => {
     if (value.trim() !== "" || file) {
       const msgDocRef = doc(msgCollectionRef);
       const id = msgDocRef.id;
       if (file) {
+        setIsFileLoading(true)
         const imageRef = ref(storage, `images/${uuidv4()}-${file.name}`);
         console.log(imageRef);
         const onSnapshot = await uploadBytesResumable(imageRef, file);
@@ -85,6 +87,7 @@ const NewMessage: FC<NewMessageProps> = ({
       }
       setValue("");
       setFile(null);
+      setIsFileLoading(false)
       setFileLoading(0);
       closeReply();
       updateDoc(roomRef, {
@@ -140,9 +143,9 @@ const NewMessage: FC<NewMessageProps> = ({
               <CloseIcon className={cl.file__icon} />
             </IconButton>
           </div>
-          <p className={cl.file__loading__progress}>
+         {isFileLoading && <p className={cl.file__loading__progress}>
             Loading... {fileLoading}%
-          </p>
+          </p>} 
         </div>
       )}
       <div className={cl.chat__send__wrapper}>
@@ -168,11 +171,7 @@ const NewMessage: FC<NewMessageProps> = ({
                     type="file"
                     onChange={
                       handleFileChange
-                      // setFile(event.target.files?.[0]);
                     }
-                    // onClick={(e:React.MouseEvent<HTMLInputElement>) => {
-                    //   e.currentTarget.value = ''
-                    // }}
                   />
                   <label htmlFor="icon__button"></label>
 

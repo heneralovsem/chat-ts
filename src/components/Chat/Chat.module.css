@@ -53,18 +53,6 @@
     display: flex;
 }
 
-.chat__pinned__messages {
-    
-    width:40% ;
-    right: 40px;
-    top: 60px;
-    height: 40%;
-    position: absolute;
-    z-index: 1;
-    overflow-y: auto;
-    border: 1px solid lightgray;
-    background-color: white;
-}
 .chat__filter__type {
     padding: 10px 15px;
 }

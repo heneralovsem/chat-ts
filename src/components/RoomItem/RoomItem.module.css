@@ -93,3 +93,8 @@
         font-size: 14px;
     }
 }
+@media (orientation: landscape) and (max-width:768px) {
+    .room__wrapper {
+        height: 40%;
+    }
+}

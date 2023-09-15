@@ -1,18 +1,7 @@
 .chat__select {
     width: 150px;
 }
-.chat__pinned__messages {
-    
-    width:40% ;
-    right: 40px;
-    top: 60px;
-    height: 40%;
-    position: absolute;
-    z-index: 1;
-    overflow-y: auto;
-    border: 1px solid lightgray;
-    background-color: white;
-}
+
 .chat__filter__type {
     padding: 10px 15px;
     width: 90%;
@@ -21,17 +10,7 @@
     display: flex;
     gap: 20px;
 }
-.chat__pinned__messages::-webkit-scrollbar {
-    width: 4px;
-}
-.chat__pinned__messages::-webkit-scrollbar-track {
-    border-radius: 11px;
-    background-color: #E3E5ED;
-}
-.chat__pinned__messages::-webkit-scrollbar-thumb {
-    border-radius: 11px;
-    background-color: #a9a9a9;
-}
+
 .chat__filtered__modal::-webkit-scrollbar {
     width: 4px;
 }
@@ -143,5 +122,10 @@
     }
     .message__filter__icon {
         width: 16px !important;
+    }
+}
+@media (orientation: landscape) and (max-width:768px) {
+    .chat__filtered__modal {
+        top: 80px;
     }
 }

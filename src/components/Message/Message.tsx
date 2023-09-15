@@ -162,7 +162,7 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
             Object.values(messages.repliedMessage).some(
               (x) => x !== null && x !== ""
             ) && (
-              <div onClick={getDocId} className={cl.messages__replied__message}>
+              <div className={cl.messages__replied__message}>
                 <Avatar
                   sx={{ width: 24, height: 24 }}
                   className={cl.chat__replied__message__avatar}
@@ -171,10 +171,10 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
                 <span className={cl.chat__replied__message__name}>
                   {messages.repliedMessage.displayName}
                 </span>
-                <span className={cl.messages__replied__message__text}>
+                <span onClick={getDocId} className={cl.messages__replied__message__text}>
                   {messages.repliedMessage.text}
                 </span>
-                {!messages.repliedMessage.text && <ImageIcon className={cl.replied__message__icon} />}
+                {!messages.repliedMessage.text && <ImageIcon onClick={getDocId} className={cl.replied__message__icon} />}
               </div>
             )}
 

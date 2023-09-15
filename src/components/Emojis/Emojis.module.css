@@ -8,3 +8,10 @@
         right: 10px;
     }
 }
+@media (orientation: landscape) and (max-width:768px) {
+    aside {
+        width: 500px !important;
+        height: 260px !important;
+
+    }
+}
