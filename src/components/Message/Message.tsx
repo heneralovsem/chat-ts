@@ -169,10 +169,10 @@ const Message:  React.ForwardRefRenderFunction<HTMLDivElement , MessageProps> = 
                   src={messages.repliedMessage.avatar}
                 />
                 <span className={cl.chat__replied__message__name}>
-                  {messages.repliedMessage.displayName}
+                  { messages.repliedMessage.displayName}
                 </span>
                 <span onClick={getDocId} className={cl.messages__replied__message__text}>
-                  {messages.repliedMessage.text}
+                  { messages.repliedMessage.text}
                 </span>
                 {!messages.repliedMessage.text && <ImageIcon onClick={getDocId} className={cl.replied__message__icon} />}
               </div>
