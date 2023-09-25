@@ -13,7 +13,7 @@ function App() {
   const {auth} = useContext(Context)
   const [user, loading, error] = useAuthState(auth)
   const lastRoom = localStorage.getItem('roomId')
-  const [selectedRoom, setSelectedRoom] =  useState<string>(lastRoom || 'General')
+  const [selectedRoom, setSelectedRoom] =  useState<string>(lastRoom || 'trkvHs0nZlu13JT7y6py')
   if (loading) {
     return <MainLoader/>
   }

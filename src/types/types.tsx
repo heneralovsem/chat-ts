@@ -18,11 +18,8 @@ export interface IRoom {
     timestamp?:any;
     users?: Array<any>;
 }
-export interface IUser {
-    name?: string;
-    uid?: string;
-    createdAt:any;
-}
+
+
 export interface IRepliedMessage {
     avatar?: string;
     displayName?:string;
